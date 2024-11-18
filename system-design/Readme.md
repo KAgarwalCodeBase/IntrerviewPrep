@@ -112,7 +112,7 @@ https://www.hellointerview.com/blog/mastering-estimation
 -   Consistency [Strong / Week / Eventual]
 -   Locking [Granularity / Duration / Can we bypass]
 -   Indexing [Primary / Secondary / Specialized]
-
+-   Communication Protocols [Internal - HTTP(s), gRPC / External - HTTP(S), SSE or long polling, and Websockets]
 
 ## Design Ticket Master
 
