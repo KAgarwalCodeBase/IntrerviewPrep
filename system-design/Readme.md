@@ -24,6 +24,16 @@ https://www.hellointerview.com/blog/mastering-estimation
 
 <sub>[back to top](#table-of-contents)</sub>
 
+## [Delivery Framework](https://www.hellointerview.com/learn/system-design/in-a-hurry/delivery)
+-   Requirements (~ 5 mins)
+    -   Functional Requirements
+    -   Non-Functional Requirements
+    -   Capacity Estimation
+-   Core Entities (~ 2 mins)
+-   API or System Interface (~5 minutes)
+-   [Optional] Data Flow (~5 minutes)  
+-   High Level Design (~10-15 minutes)
+-   Deep Dives (~10 minutes)
 
 ## Ticket Master
 
