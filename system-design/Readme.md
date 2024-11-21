@@ -134,3 +134,7 @@ Hello Interview
 -   As we required to search for driver on the basis of it's [lat, long] position so SQL DB's are not good choice because they internally uses B-Tree.
 
 <sub>[back to top](#table-of-contents)</sub>
+
+## Design Dropbox
+Pattern Trust but Verify: Instead of trusting on client that it is always sending a correct data do check as much as possible.
+
