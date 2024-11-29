@@ -9,6 +9,7 @@
 - [Object Finalization in Java](#object-finalization-in-java)
 - [StringBuffer Vs StringBuilder](#stringbuffer-vs-stringbuilder)
 - [Comparison of some similar data structures in Java based on functionality, thread-safety, performance, and usage](#comparison-of-some-similar-data-structures-in-java-based-on-functionality-thread-safety-performance-and-usage)
+- [Difference Between Checked Exceptions, Unchecked Exceptions, and Errors](#difference-between-checked-exceptions-unchecked-exceptions-and-errors)
 
 ### Marker Interfaces in JAVA
 -   Cloneable
@@ -746,3 +747,97 @@ public class StringBuilderExample {
 ### **Summary**
 - Choose based on requirements like **thread safety** (e.g., `Vector` vs `ArrayList`), **ordering** (e.g., `TreeSet` vs `HashSet`), and **performance** (e.g., `HashMap` vs `TreeMap`).
 - Modern data structures (`ArrayList`, `Deque`, `ConcurrentHashMap`) are preferred over legacy ones (`Vector`, `Hashtable`, `Stack`).
+
+[back to top](#index)
+### **Difference Between Checked Exceptions, Unchecked Exceptions, and Errors**
+
+---
+
+| **Aspect**               | **Checked Exceptions**                        | **Unchecked Exceptions**                       | **Errors**                                     |
+|--------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|
+| **Definition**            | Exceptions that must be handled at compile time (checked by the compiler). | Exceptions that occur at runtime and are not checked at compile time. | Critical issues related to the JVM or environment, not recoverable in most cases. |
+| **Examples**             | `IOException`, `SQLException`, `FileNotFoundException`, `ClassNotFoundException`. | `NullPointerException`, `ArrayIndexOutOfBoundsException`, `ArithmeticException`. | `OutOfMemoryError`, `StackOverflowError`, `NoClassDefFoundError`. |
+| **Compile-Time Handling**| Must be declared in the method signature using `throws` or handled with a `try-catch` block. | Not required to be declared or handled explicitly. | Cannot be handled programmatically in most cases. |
+| **Cause**                | Typically caused by external factors like file handling, database access, or network issues. | Typically caused by logical errors or bugs in the program. | Critical system-level problems (e.g., resource exhaustion, JVM issues). |
+| **Recovery**             | Can often be recovered by handling (e.g., retrying the operation, providing default values). | Can sometimes be recovered by fixing logical issues in the code. | Rarely recoverable; typically requires restarting the application or JVM. |
+| **Hierarchy**            | Subclasses of `Exception` (except `RuntimeException`). | Subclasses of `RuntimeException`.             | Subclasses of `Error`.                        |
+| **Handling Requirement**| Mandatory to handle or declare.               | Optional to handle.                           | Should not be handled explicitly.             |
+| **Use Case**             | For predictable issues that the program can potentially recover from. | For programming errors or bugs.               | For fatal problems that are beyond application control. |
+
+---
+
+### **Detailed Examples**
+
+#### **Checked Exception**
+```java
+import java.io.*;
+
+public class CheckedExceptionExample {
+    public static void main(String[] args) {
+        try {
+            FileReader file = new FileReader("nonexistentfile.txt"); // FileNotFoundException
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+        }
+    }
+}
+```
+- **Explanation**:
+  - The `FileNotFoundException` is a checked exception.
+  - The compiler forces you to either handle it with a `try-catch` block or declare it with `throws`.
+
+---
+
+#### **Unchecked Exception**
+```java
+public class UncheckedExceptionExample {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3};
+        System.out.println(arr[3]); // ArrayIndexOutOfBoundsException
+    }
+}
+```
+- **Explanation**:
+  - The `ArrayIndexOutOfBoundsException` is an unchecked exception.
+  - It is not checked by the compiler, and the program crashes if not handled.
+
+---
+
+#### **Error**
+```java
+public class ErrorExample {
+    public static void main(String[] args) {
+        main(args); // Infinite recursion causes StackOverflowError
+    }
+}
+```
+- **Explanation**:
+  - The `StackOverflowError` occurs when the call stack is exhausted.
+  - Errors like these are not meant to be handled programmatically.
+
+---
+
+### **When to Use**
+
+| **Scenario**                      | **Use Case**                                                                 |
+|------------------------------------|------------------------------------------------------------------------------|
+| **Checked Exceptions**             | For external resources (e.g., file handling, database access) that might fail. |
+| **Unchecked Exceptions**           | For programming bugs (e.g., null pointer access, invalid array indexing).    |
+| **Errors**                         | For critical system issues like resource exhaustion, JVM issues, etc.         |
+
+---
+
+### **Summary**
+1. **Checked Exceptions**:
+   - Must be handled at compile time.
+   - Used for predictable issues like I/O or database failures.
+
+2. **Unchecked Exceptions**:
+   - Occur due to programming logic errors.
+   - Checked at runtime, optional to handle.
+
+3. **Errors**:
+   - Represent critical problems beyond the application's control.
+   - Usually cannot be recovered programmatically.
+
+[back to top](#index)
