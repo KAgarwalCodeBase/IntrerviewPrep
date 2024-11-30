@@ -10,6 +10,8 @@
 - [StringBuffer Vs StringBuilder](#stringbuffer-vs-stringbuilder)
 - [Comparison of some similar data structures in Java based on functionality, thread-safety, performance, and usage](#comparison-of-some-similar-data-structures-in-java-based-on-functionality-thread-safety-performance-and-usage)
 - [Difference Between Checked Exceptions, Unchecked Exceptions, and Errors](#difference-between-checked-exceptions-unchecked-exceptions-and-errors)
+- [Annotations in JAVA](#annotations-in-java)
+- [Collections Hierarchy](#collection-hierarchy)
 
 ### Marker Interfaces in JAVA
 -   Cloneable
@@ -839,5 +841,62 @@ public class ErrorExample {
 3. **Errors**:
    - Represent critical problems beyond the application's control.
    - Usually cannot be recovered programmatically.
+
+[back to top](#index)
+
+### **Annotations in Java**
+
+Annotations are **metadata** in Java that provide additional information about the code without affecting its execution. They are used for **compiler instructions**, **runtime configurations**, and **code generation**.
+
+---
+
+### **Key Points**
+1. **Syntax**: Annotations start with `@` (e.g., `@Override`).
+2. **Placement**: Can be applied to classes, methods, fields, parameters, etc.
+3. **Categories**:
+   - **Built-in Annotations**:
+     - `@Override`: Ensures method overrides a superclass method.
+     - `@Deprecated`: Marks code as outdated.
+     - `@SuppressWarnings`: Suppresses compiler warnings.
+   - **Runtime Annotations**:
+     - Used by frameworks (e.g., `@Entity`, `@Autowired`) and accessed via reflection.
+   - **Custom Annotations**:
+     - Define your own with `@interface`, `@Retention`, and `@Target`.
+
+---
+
+### **Typical Use Cases**
+1. **Compile-Time Checks**:
+   - Example: `@Override` ensures a method correctly overrides.
+2. **Runtime Configurations**:
+   - Frameworks like Spring (`@Autowired`), Hibernate (`@Entity`), JUnit (`@Test`).
+3. **Dependency Injection**:
+   - Example: Spring’s `@Autowired` for injecting dependencies.
+4. **Code Generation**:
+   - Example: Lombok’s `@Getter` and `@Setter` for reducing boilerplate code.
+5. **Testing**:
+   - Example: JUnit’s `@Test` marks test methods.
+
+---
+
+### **Example**
+```java
+@Override
+public String toString() {
+    return "Example";
+}
+
+@CustomAnnotation("Custom Value")
+public void myMethod() {
+    System.out.println("Custom annotation applied.");
+}
+```
+
+Annotations improve code clarity, reduce boilerplate, and simplify configuration, making them essential in modern Java development.
+
+[back to top](#index)
+
+### Collection Hierarchy
+![Collections](../assets/Collections-in-Java.png)
 
 [back to top](#index)
