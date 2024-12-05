@@ -1,4 +1,4 @@
-## Index
+## Table of Contents
 - [What is Spring boot?](#what-is-spring-boot)
 - [For Accessing Properties in `application.properties` File](#for-accessing-properties-in-applicationproperties-file)
 - [Annotations in Spring Boot](#annotations-in-spring-boot)
@@ -18,7 +18,7 @@
 - rapid application development.
 - provides embedded server.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### For Accessing Properties in `application.properties` File
 
@@ -65,7 +65,7 @@
 #### Best Practice:  
 - Use `@ConfigurationProperties` for structured and reusable configurations.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 ### **Annotations in Spring Boot**
 
 1. **`@SpringBootApplication`**  
@@ -104,7 +104,7 @@
 12. **`@ApplicationContext`**  
     - Not an annotation. Refers to the Spring container that manages beans and configurations.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### **Creating a Bean in Spring Boot**
 
@@ -184,7 +184,7 @@ public class MyConfiguration {
 - Spring Boot prefers annotation-based configurations over XML for simplicity and modern development practices. 
 - Use XML configurations only when working with older Spring versions or integrating with legacy systems.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### What are the different Autowiring modes?
 - no  
@@ -192,7 +192,7 @@ public class MyConfiguration {
 - byType  
 - constructor  
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### What are the different bean scopes in spring?
 -   Singleton
@@ -201,7 +201,7 @@ public class MyConfiguration {
 -   Session
 -   Globalsession
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### Database Configuration.
 For setting database connection we need to set the values of url, username and password for database in application.properties file.
@@ -215,7 +215,7 @@ spring.datasource.password=root
 ### Note:
 For using different datasource other than default HikariCP. We need to exclude the datasource and jdbcTempalte dependencies.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### Different ways to exclude dependencies in spring boot.
 #### Example:  
@@ -252,18 +252,18 @@ dependencies {
 }
 ```
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### DataSource
 A DataSource is an abstraction that provides a way to manage a database connection pool and handles acquiring connections for querying or updating the database.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### JdbcTemplate
 
 JdbcTemplate is a class in Spring Framework that simplifies interaction with a relational database using JDBC (Java Database Connectivity). It abstracts and handles the repetitive tasks of connecting to the database, executing SQL queries, and processing results.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### Different Datasource we can use in Spring.
 - c3p0
@@ -304,7 +304,7 @@ public class DataConfig {
 }
 ```
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### Dependency Injection
 Dependency Injection is a technique where an object’s dependencies are provided (injected) by an external system, like the Spring Framework, rather than the object creating the dependencies itself.
@@ -323,7 +323,7 @@ Think of it like ordering food at a restaurant:
 You don’t go into the kitchen (your class) and make your own meal (create the dependency).
 Instead, the waiter (Spring) delivers the meal (dependency) to your table (class).
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
 
 ### Inversion of Control
 
@@ -335,4 +335,4 @@ Imagine you're hosting a party:
 Without IoC: You handle everything—buying groceries, cooking, serving food, and cleaning up.
 With IoC: You hire a catering service (the framework). The caterers take over all the tasks, and you just enjoy the party.
 
-[back to top](#index)
+<sub>[back to top](#table-of-contents)</sub>
