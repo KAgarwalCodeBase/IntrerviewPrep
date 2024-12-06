@@ -12,6 +12,10 @@
 - [Difference Between Checked Exceptions, Unchecked Exceptions, and Errors](#difference-between-checked-exceptions-unchecked-exceptions-and-errors)
 - [Annotations in JAVA](#annotations-in-java)
 - [Collections Hierarchy](#collection-hierarchy)
+- [Making a class thread safe in java](#making-a-class-thread-safe-in-java)
+- [Does Singleton Thread Safe in JAVA](#does-signleton-thread-safe-in-java)
+- [@Service Vs @Component](#service-vs-component)
+- [Immutable classes in java](#immutable-classes-in-java)
 
 ### Marker Interfaces in JAVA
 -   Cloneable
@@ -900,3 +904,402 @@ Annotations improve code clarity, reduce boilerplate, and simplify configuration
 ![Collections](../assets/Collections-in-Java.png)
 
 [back to top](#index)
+
+### **Making a Class Thread-Safe in Java**
+
+A **thread-safe class** ensures that its methods or operations behave correctly when accessed by multiple threads concurrently. Below are various techniques to achieve thread safety in Java:
+
+-   Use Synchronized Keyword.
+-   Use volatile Keyword.
+-   Use Atomic Classes.
+-   Use java.util.concurrent.locks.
+-   Use immutable objects.
+-   Use Thread-safe Collections.
+-   Use Thread local variables.
+
+---
+
+### **1. Use `synchronized` Keyword**
+- Synchronize critical sections of code to allow only one thread to access them at a time.
+
+**Example:**
+```java
+public class Counter {
+    private int count = 0;
+
+    public synchronized void increment() {
+        count++;
+    }
+
+    public synchronized int getCount() {
+        return count;
+    }
+}
+```
+
+---
+
+### **2. Use `volatile` Keyword**
+- Ensure visibility of changes to variables across threads.
+- Suitable for simple read/write operations.
+
+**Example:**
+```java
+public class SharedFlag {
+    private volatile boolean flag = true;
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+}
+```
+
+---
+
+### **3. Use Atomic Classes (from `java.util.concurrent.atomic`)**
+- For atomic operations without explicit synchronization.
+
+**Example:**
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Counter {
+    private AtomicInteger count = new AtomicInteger(0);
+
+    public void increment() {
+        count.incrementAndGet();
+    }
+
+    public int getCount() {
+        return count.get();
+    }
+}
+```
+
+---
+
+### **4. Use `java.util.concurrent.locks`**
+- Provides more control over locking mechanisms.
+
+**Example:**
+```java
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Counter {
+    private int count = 0;
+    private final ReentrantLock lock = new ReentrantLock();
+
+    public void increment() {
+        lock.lock();
+        try {
+            count++;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int getCount() {
+        lock.lock();
+        try {
+            return count;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+
+---
+
+### **5. Use Immutable Objects**
+- Make all fields `final` and prevent modifications to the object's state.
+
+**Example:**
+```java
+public final class ImmutablePoint {
+    private final int x;
+    private final int y;
+
+    public ImmutablePoint(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+}
+```
+
+---
+
+### **6. Use Thread-Safe Collections**
+- Replace standard collections with thread-safe alternatives like:
+  - `Collections.synchronizedList()`
+  - `CopyOnWriteArrayList`
+  - `ConcurrentHashMap`
+
+**Example:**
+```java
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class ThreadSafeList {
+    private final CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+
+    public void add(String item) {
+        list.add(item);
+    }
+
+    public String get(int index) {
+        return list.get(index);
+    }
+}
+```
+
+---
+
+### **7. Thread-Local Variables**
+- Each thread has its own isolated copy of the variable.
+
+**Example:**
+```java
+public class ThreadSafeExample {
+    private static ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> 0);
+
+    public int getValue() {
+        return threadLocal.get();
+    }
+
+    public void setValue(int value) {
+        threadLocal.set(value);
+    }
+}
+```
+
+---
+
+### **Choosing the Right Method**
+- **Simple Cases:** Use `synchronized` or `volatile`.
+- **High Performance:** Use `Atomic` classes or `Locks`.
+- **Collections:** Use thread-safe collections.
+- **Immutability:** Use immutable objects for read-only data.
+- **Per-Thread State:** Use `ThreadLocal`.
+
+Each approach has trade-offs in complexity, performance, and suitability depending on the use case.
+
+[back to top](#index)
+
+
+## Does signleton Thread Safe in JAVA?
+A **singleton class** is not inherently thread-safe in Java. If multiple threads attempt to create an instance simultaneously, it may result in multiple instances being created. To ensure thread safety, the implementation must be explicitly designed to handle concurrency.
+
+
+- `Eager Initialization`: The instance is created when the class is loaded.
+- `Synchronized Method`: Ensure only one thread can access the method at a time.
+- `Double Checking Locking`: Use volitile and Synchronized both.
+- `Bill Pugh Singleton`: Relies on JAVA loader.
+
+---
+
+### **Thread-Safe Singleton Implementations**
+
+#### **1. Eager Initialization (Thread-Safe)**
+- The instance is created when the class is loaded.
+- Thread-safe because the class loader ensures that only one instance is created.
+
+**Example:**
+```java
+public class Singleton {
+    private static final Singleton INSTANCE = new Singleton();
+
+    private Singleton() {
+        // private constructor
+    }
+
+    public static Singleton getInstance() {
+        return INSTANCE;
+    }
+}
+```
+
+---
+
+#### **2. Synchronized Method**
+- Uses `synchronized` to ensure only one thread can access the method at a time.
+- Slower due to synchronization overhead.
+
+**Example:**
+```java
+public class Singleton {
+    private static Singleton instance;
+
+    private Singleton() {
+        // private constructor
+    }
+
+    public static synchronized Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+```
+
+---
+
+#### **3. Double-Checked Locking (Lazy Initialization)**
+- Improves performance by reducing synchronization overhead.
+- Uses `volatile` to ensure proper visibility of the instance across threads.
+
+**Example:**
+```java
+public class Singleton {
+    private static volatile Singleton instance;
+
+    private Singleton() {
+        // private constructor
+    }
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+
+---
+
+#### **4. Bill Pugh Singleton (Best Practice)**
+- Relies on the Java class loader to ensure thread safety.
+- Instance is created only when the `getInstance()` method is called.
+
+**Example:**
+```java
+public class Singleton {
+    private Singleton() {
+        // private constructor
+    }
+
+    private static class SingletonHelper {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+
+    public static Singleton getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+}
+```
+
+---
+
+### **Which Implementation to Use?**
+- **Eager Initialization**: If the singleton is lightweight and will always be used.
+- **Double-Checked Locking**: For a balance of performance and lazy initialization.
+- **Bill Pugh Singleton**: Best practice for lazy initialization and thread safety without synchronization overhead. 
+
+By using these approaches, you can make a singleton class thread-safe.
+
+[back to top](#index)
+
+### **Singleton Vs Static Class in JAVA**  
+- **Static Classes** are used for utility functions and are stateless.  
+- **Singleton Classes** ensure a single instance exists and allow state management, flexibility, and testability.  
+- Singleton is better for scenarios needing inheritance, dependency injection, or polymorphism.
+
+---
+
+### **Key Differences Between Singleton and Static Classes**
+
+| **Aspect**              | **Singleton Class**                                  | **Static Class**                          |
+|-------------------------|------------------------------------------------------|-------------------------------------------|
+| **Instance**            | Single instance, created when needed.                | No instance, accessed via class name.     |
+| **Inheritance**         | Supports inheritance and interfaces.                 | No inheritance or polymorphism.           |
+| **State**               | Can maintain state using instance variables.         | Stateless (no instance-level variables).  |
+| **Lazy Initialization** | Instance created lazily if needed.                   | Always loaded when the class is accessed. |
+| **Testability**         | Easier to mock or replace in tests.                  | Hard to mock or replace.                  |
+| **Use Case**            | Complex objects requiring state or polymorphism.     | Utility methods with no state or side effects. |
+
+
+[back to top](#index)
+
+
+### @Service Vs @Component
+
+@Service: A specialization of @Component for service layer classes, indicating business logic.  
+@Component: General-purpose annotation for any Spring-managed bean.  
+
+Both perform the same function, but `@Service provides semantic clarity.`
+
+[back to top](#index)  
+
+### **Immutable Classes in Java**
+
+An **immutable class** is a class whose **state** (i.e., its fields) cannot be **modified** after it is created.
+
+### **Key Characteristics of Immutable Classes**:
+1. **Final Class**: The class is declared `final` to prevent subclassing.
+2. **Final Fields**: All fields are declared `final` so they can be assigned only once.
+3. **No Setter Methods**: No methods are provided to modify the object's state.
+4. **Proper Initialization**: Fields are initialized via the constructor and cannot be changed afterward.
+5. **Defensive Copies**: If the class contains fields that refer to mutable objects, those fields are **copied** to ensure the original object remains unmodified.
+
+---
+
+### **Why Use Immutable Classes?**
+1. **Thread Safety**: Immutable objects are inherently **thread-safe** since their state cannot be changed after creation, making them ideal for concurrent programming.
+2. **Simplicity**: They are easier to reason about because their state is fixed and predictable.
+3. **Security**: Immutable objects can't be altered, which makes them safer for use in security-sensitive contexts.
+4. **Caching**: Since their state doesn't change, immutable objects can be safely cached without risk of data inconsistency.
+
+### **Example of an Immutable Class**:
+```java
+public final class Person {
+    private final String name;
+    private final int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+```
+
+In this example, `Person` is immutable because:
+- It cannot be subclassed (`final class`).
+- Fields are `final` and can only be set in the constructor.
+- There are no setter methods.
+
+[back to top](#index)  
+
+Thread Safe
+-   ConcurrentHashMap
+-   HashTable
+-   Vector
+
+Non-Thread Safe
+-   HashpMap
+-   ArrayList
+-   LinkedList
