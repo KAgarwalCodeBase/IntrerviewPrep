@@ -12,6 +12,7 @@
 - [Different datasources we can use in Spring.](#different-datasource-we-can-use-in-spring)
 - [Dependency Injection](#dependency-injection)
 - [Inversion of control](#inversion-of-control)
+- [How to Secure Spring Application?](#how-to-secure-spring-application)
 
 ### What is Spring boot?
 - auto-configurationa and set-up process.
@@ -274,7 +275,6 @@ JdbcTemplate is a class in Spring Framework that simplifies interaction with a r
 
 #### Example:
 ```java
-//Configuration for c3p0 datasource
 @Configuration
 public class DataConfig {
     
@@ -289,17 +289,17 @@ public class DataConfig {
     private String password;
     
     @Bean
-    DataSource dataSource(){
+    public DataSource dataSource() {
         ComboPooledDataSource datasource = new ComboPooledDataSource();
         datasource.setJdbcUrl(url);
-        datasource.setUser(user);
+        datasource.setUser(username);  // Corrected variable name here
         datasource.setPassword(password);
-        return dataSource;
+        return datasource;  // Corrected return variable name
     }
 
-    @Bean 
-    JdbcTemplate jdbcTemplate(){
-        return new JdbcTemplate(dataSource())
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());  // Added missing semicolon
     }
 }
 ```
@@ -314,7 +314,7 @@ Dependency Injection is a technique where an object’s dependencies are provide
 To make the code loosely coupled, testable, and easier to maintain.
 Types of Dependency Injection:
 
-Constructor Injection: Dependencies are passed through the class constructor.
+Constructor Injection: Dependencies are passed through the class constructor.  
 Setter Injection: Dependencies are set via setter methods.
 
 #### Analogy
@@ -335,4 +335,158 @@ Imagine you're hosting a party:
 Without IoC: You handle everything—buying groceries, cooking, serving food, and cleaning up.
 With IoC: You hire a catering service (the framework). The caterers take over all the tasks, and you just enjoy the party.
 
+
+### How to Secure Spring Application?
+
+Securing a Spring application involves implementing various layers of protection to safeguard against unauthorized access, data breaches, and other vulnerabilities. Here’s a comprehensive approach to securing your Spring application:
+
+---
+
+### **1. Secure Application Properties**
+- **Use Encrypted Credentials:**
+  - Avoid hardcoding sensitive data (e.g., database credentials, API keys).
+  - Use Spring’s support for encrypted properties with tools like [Jasypt](https://github.com/ulisesbocchio/jasypt-spring-boot).
+- **Environment Variables:**
+  - Store sensitive information like database passwords in environment variables or externalized configuration.
+
+---
+
+### **2. Enable HTTPS**
+- Use HTTPS to encrypt data in transit:
+  - Configure Spring Boot to use SSL by adding a keystore to your application:
+    ```properties
+    server.port=8443
+    server.ssl.key-store=classpath:keystore.p12
+    server.ssl.key-store-password=yourpassword
+    server.ssl.key-store-type=PKCS12
+  - Generate a keystore using tools like `keytool` or obtain an SSL certificate from a trusted provider.
+    
+---
+
+### **3. Secure Spring Security Configuration**
+- Use Spring Security for Authentication and Authorization:
+  ```java
+  @Configuration
+  @EnableWebSecurity
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+      @Override
+      protected void configure(HttpSecurity http) throws Exception {
+          http
+              .authorizeRequests()
+              .antMatchers("/admin/**").hasRole("ADMIN")
+              .antMatchers("/user/**").hasRole("USER")
+              .antMatchers("/", "/public/**").permitAll()
+              .and()
+              .formLogin()
+              .and()
+              .csrf().disable();  // Enable if using stateful sessions
+      }
+  }
+  ```
+
+- **Use Password Encoding:**
+  - Use `BCryptPasswordEncoder` to hash passwords:
+    ```java
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    ```
+
+---
+
+### **4. Validate User Inputs**
+- Use validation frameworks like Hibernate Validator for data validation.
+  ```java
+  @NotNull
+  @Size(min = 8, max = 20)
+  private String username;
+  ```
+- Sanitize inputs to avoid SQL Injection and XSS attacks.
+- If using query parameters, use parameterized queries or Spring Data JPA.
+
+---
+
+### **5. Secure APIs**
+- **OAuth2/OpenID Connect:**
+  - Use Spring Security OAuth2 for token-based authentication.
+  - Protect your APIs with JWT (JSON Web Tokens):
+    ```properties
+    spring.security.oauth2.resourceserver.jwt.issuer-uri=https://your-issuer
+    ```
+
+- **Rate Limiting:**
+  - Prevent abuse by implementing rate limiting using libraries like Bucket4j or Resilience4j.
+
+---
+
+### **6. Prevent CSRF (Cross-Site Request Forgery)**
+- Enable CSRF protection for stateful applications.
+- For stateless applications (APIs), use secure headers like `X-CSRF-TOKEN` or `Authorization` tokens.
+
+---
+
+### **7. Secure Headers**
+- Add HTTP security headers to prevent attacks:
+  ```java
+  @Bean
+  public WebSecurityConfigurerAdapter securityHeaders() {
+      return new WebSecurityConfigurerAdapter() {
+          @Override
+          protected void configure(HttpSecurity http) throws Exception {
+              http.headers()
+                  .contentSecurityPolicy("script-src 'self'")
+                  .and()
+                  .xssProtection()
+                  .and()
+                  .frameOptions().deny();
+          }
+      };
+  }
+  ```
+
+---
+
+### **8. Monitor and Log**
+- Use monitoring tools like **Spring Boot Actuator** to track application health.
+- Use logging frameworks like Logback and ensure logs don’t expose sensitive information.
+- Integrate with centralized logging and monitoring solutions (e.g., ELK Stack, Prometheus).
+
+---
+
+### **9. Secure Dependency Management**
+- Keep dependencies up to date to avoid vulnerabilities.
+- Use tools like **OWASP Dependency-Check** or **Snyk** to scan for vulnerabilities in libraries.
+
+---
+
+### **10. Implement Database Security**
+- Use parameterized queries or ORM frameworks like JPA to prevent SQL injection.
+- Use least-privilege access for database users.
+
+---
+
+### **11. Protect Against Common Vulnerabilities**
+- **Injection Attacks:** Use prepared statements or Hibernate.
+- **XSS:** Sanitize outputs using libraries like OWASP Java HTML Sanitizer.
+- **Session Hijacking:** Use secure cookies (`Secure` and `HttpOnly` flags) and session timeouts.
+
+---
+
+### **12. Use a Web Application Firewall (WAF)**
+- Deploy a WAF to protect your application from external threats.
+
+---
+
+### **13. Secure Deployment**
+- Deploy applications in secure environments:
+  - Use containerization tools like Docker with properly configured images.
+  - Use orchestration tools like Kubernetes for managing clusters securely.
+
+---
+
+By implementing these practices, you can significantly enhance the security of your Spring application. 
+
 <sub>[back to top](#table-of-contents)</sub>
+
+
