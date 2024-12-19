@@ -14,8 +14,12 @@
 -   [Future Reads](#future-reads)
 -   [Delivery Framework](#delivery-framework)
 -   [Core Concepts](#core-concepts)
+-   [Key Technologies](#key-technologies)
 -   [Design Ticket Master](#design-ticket-master)
 -   [Design Uber](#design-uber)
+
+Flink/Aws firehouse / Spark streams: Aggregator services 
+count min sketch / map reduce 
 
 ## Important Topics:
 ### AWS Opensearch 
@@ -113,6 +117,24 @@ https://www.hellointerview.com/blog/mastering-estimation
 -   Locking [Granularity / Duration / Can we bypass]
 -   Indexing [Primary / Secondary / Specialized]
 -   Communication Protocols [Internal - HTTP(s), gRPC / External - HTTP(S), SSE or long polling, and Websockets]
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## Key Technologies
+- Core Database (DynamoDB, MongoDB)
+    - Relational Databases
+    - NoSQL Databases
+- Blob Storage (Amazon S3, Google Cloud Storage)
+- Search Optimized Database (Elasticsearch)
+- API Gateway (AWS API Gateway, Kong and Apigee.)
+- Load Balancer (AWS Elastic Load Balancer, NGINX and HAProxy)
+- Queue (Kafka and SQS) 
+- Streams / Event Sourcing (Kafka and Kinesis)
+- Distributed Lock (Redis or Zookeeper)
+- Distributed Cache (Redis and Memcached)
+- CDN (Cloudflare, Akamai and Amazon CloudFront)
+
+<sub>[back to top](#table-of-contents)</sub>
 
 ## Design Ticket Master
 
