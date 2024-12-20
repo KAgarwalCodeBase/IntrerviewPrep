@@ -3,7 +3,8 @@
 ## Table of Contents
 -   [Important Topics](#important-topics)
     - [AWS Opensearch](#aws-opensearch)
-    - [Redis/Memcache](#redismemcache)
+    - [Redis](#redis)
+    - [Kafka](#kafka)
     - [Long Polling](#long-polling)
     - [Web Sockets](#web-sockets)
     - [Server Sent Events](#server-sent-events-sse)
@@ -27,7 +28,35 @@ Node query caching from all of the clusters of elastic seach if cache 10k querie
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Redis/Memcache
+### [Redis](https://www.youtube.com/watch?v=fmT5nlEkl3U&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=2&pp=iAQB)
+Where to use Redis:
+- ⁠basic rate limiting
+- ⁠⁠geo spacitial index
+- ⁠⁠service registry
+- ⁠⁠producer-consumer i.e async job queue
+
+**Redis stream** - order of list of items that given an id which is usually a timestamp this id’s has their own key- value pair.
+
+
+- Data structures database
+- Redis give us power to use data structures in databases.
+- Bloomfilter, string, obj might be Redis key  
+- Replica of Redis updated every minute.  
+- Only way to shard the Redis is to choose the key on which we are going to shard the data.
+- Hotkey problem: append random number to the key.
+- To scale Redis thought about key space.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+### [Kafka](https://www.youtube.com/watch?v=DU8o-OTeoCc&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=1&pp=iAQB)
+Use case: 
+- Multiple consumer. ex: Facebook Comments.
+- Inorder message processing. ex: Ticketmaster.
+- In place of queue. ex: YouTube transcribe.
+- Decouple producer and consumer so they can scale independently. ex: Leetcode online judge. 
+- Need to process a lot of data in realtime. ex: Ad-click
+- Kafka will do the implicit retry at producer side.
+- Kafka does not do implicit retry at consumer side we need to do it and put the message in retry queue.
 
 <sub>[back to top](#table-of-contents)</sub>
 
@@ -55,9 +84,26 @@ SSE is unidirection, only from server to client.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Elastic Search
+### [Elastic Search](https://www.youtube.com/watch?v=PuZvF2EyfBM&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=3)
+
 - For fast search queries, it uses a inverted index.
-- It is not a good practice to use a elastic search as a primary database because of durability concerns and not support for complex transaction  management 
+- Elastic search support point in time search.
+-  A search request by default executes against the most recent visible data of the target indices, which is called point in time. Elasticsearch pit (point in time) is a lightweight view into the state of the data as it existed when initiated.
+- It is very expensive.  
+
+**Question:** How you can use elastic search in your system design interview?  
+**Answer:** For complex search   
+- geo sptial.
+- vector search.
+- full text search.
+
+Notes:
+- Not your primary database.  
+- Best with read-heavy workloads.   
+- Must tolerate eventual consistency. 
+- Denormalization is the key. (It faces problems in join. So, not good for things which required join.)  
+- Do you even need it.
+
 
 <sub>[back to top](#table-of-contents)</sub>
 
