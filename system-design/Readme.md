@@ -123,6 +123,8 @@ Kafka's architecture is built around a distributed messaging system designed for
 
 This architecture enables Kafka to handle real-time data streams efficiently and reliably.
 
+**Note**:  
+On good hardware, a single broker can store around 1TB of data and handle around 10,000 messages per second (this is very hand wavy as it depends on message size and hardware specs, but is a useful estimate)
 <sub>[back to top](#table-of-contents)</sub>
 
 ### [Cassandra](https://www.hellointerview.com/learn/system-design/deep-dives/cassandra)
@@ -158,6 +160,15 @@ example: one, two, three, quorum, any etc.
 
 **Falut Tolerance**  
 Nodes independently detect failures during gossip, temporarily storing write data as hints for offline nodes to ensure data consistency and recovery when they rejoin the cluster.
+
+**Concurrency Control**
+- Using Concurrency Control (`Last Write Win`)
+- Lightweight Transactions using Paxos
+- Concurrent Write Handling using `Memtable` updates and `commit log`.
+- Read-Repair
+- consistency level (Quorum, all, one)
+- Writes are never overwritten in place. Instead, new data is appended with newer timestamps.
+- Old data is compacted and garbage collected during the compaction process.
 
 <sub>[back to top](#table-of-contents)</sub>
 ### Long Polling
