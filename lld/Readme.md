@@ -40,7 +40,6 @@ class Dog{
 - In strategy pattern we mainly uses concept of decoupling.
 - Where instead of implementing the interface we uses composition for adding the functionality.
 - Not implementing interface because then all classes should have to implement it even they are not using it.
-- 
 
 ## Observer Pattern
 **Subject.java (interface)**
@@ -54,12 +53,12 @@ class Dog{
 Subject will register all the observers and notify them if its internal state changes.
 
 ## [Abstract Factory Design Pattern](https://chatgpt.com/share/6766515c-b660-8008-b475-9cce6d44e9f0)
-- Provide an interface of creating families of related or dependent objects without specifying their concrete classes.
+Provide an interface of creating families of related or dependent objects without specifying their concrete classes.
 
 Example: In a company manager knows who can solve the issue. And then he refers to the concerned department.
 
 ## [Singleton Pattern](https://chatgpt.com/share/67665514-ca50-8008-b656-bcfa3c00b3c5)
-- Use for creating a single instance of an object.
+Use for creating a single instance of an object.
 
 Example: Singleton Pattern
 ```java
