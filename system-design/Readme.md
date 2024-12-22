@@ -9,6 +9,7 @@
     - [Redis](#redis)
     - [Kafka](#kafka)
     - [Cassandra](#cassandra)
+    - [DynamoDB](#dynamodb)
     - [Long Polling](#long-polling)
     - [Web Sockets](#web-sockets)
     - [Server Sent Events](#server-sent-events-sse)
@@ -156,7 +157,7 @@ example: one, two, three, quorum, any etc.
 - SSTable - A.k.a. "Sorted String Table." Immutable file on disk containing data that was flushed from a previous Memtable.
 ![Write in Cassandra](./assets/storage_cassandra.png)
 
-- When reading data for a particular key, Cassandra reads the Memtable first, which will have the latest data. If the Memtable does not have the data for the key, Cassandra leverages a bloom filter to determine which SSTables on disk might have the data. It then reads the SSTables in order from newest to oldest to find the latest data for the row. 
+- When reading data for a particular key, Cassandra reads the Memtable first, which will have the latest data. If the Memtable does not have the data for the key, Cassandra leverages a `bloom filter` to determine which SSTables on disk might have the data. It then reads the SSTables in order from newest to oldest to find the latest data for the row. 
 
 **Falut Tolerance**  
 Nodes independently detect failures during gossip, temporarily storing write data as hints for offline nodes to ensure data consistency and recovery when they rejoin the cluster.
@@ -170,7 +171,161 @@ Nodes independently detect failures during gossip, temporarily storing write dat
 - Writes are never overwritten in place. Instead, new data is appended with newer timestamps.
 - Old data is compacted and garbage collected during the compaction process.
 
+#### Indexes:
+
+Cassandra provides several types of indexes to support efficient data retrieval and enhance query flexibility. Each type of index is suited for specific use cases, depending on the data model and query requirements.
+
+---
+
+### 1. **Primary Index (Primary Key)**
+- **Description**: The primary index is automatically created for the **primary key** of a table, which includes the partition key and clustering columns.
+- **Use Case**: It is used to efficiently locate rows by the partition key.
+- **Example**:
+  ```sql
+  CREATE TABLE users (
+      user_id UUID PRIMARY KEY,
+      name TEXT,
+      email TEXT
+  );
+  ```
+  Querying by `user_id` is efficient because it uses the primary index.
+
+---
+
+### 2. **Secondary Index**
+- **Description**: A secondary index can be created on a column that is **not part of the primary key** to support additional query patterns.
+- **Use Case**: Used for queries that do not include the partition key, but it has limitations, such as performance issues on large datasets.
+- **Syntax**:
+  ```sql
+  CREATE INDEX email_index ON users (email);
+  ```
+- **Query Example**:
+  ```sql
+  SELECT * FROM users WHERE email = 'john@example.com';
+  ```
+
+#### Limitations of Secondary Indexes:
+- Not efficient for high-cardinality columns (columns with many unique values).
+- Best suited for low-cardinality or moderately distributed values.
+- Performance can degrade with large datasets or frequent updates.
+
+---
+
+### 3. **Materialized Views**
+- **Description**: A materialized view creates a new table with an alternate primary key, derived from the base table, allowing additional query patterns.
+- **Use Case**: Used to precompute and store results for alternate queries, effectively supporting multiple query patterns without duplicating data.
+- **Syntax**:
+  ```sql
+  CREATE MATERIALIZED VIEW user_by_email AS
+  SELECT user_id, name, email
+  FROM users
+  WHERE email IS NOT NULL
+  PRIMARY KEY (email, user_id);
+  ```
+- **Query Example**:
+  ```sql
+  SELECT * FROM user_by_email WHERE email = 'john@example.com';
+  ```
+
+#### Limitations of Materialized Views:
+- Requires additional storage and computational resources.
+- Updates to the base table propagate to the view asynchronously, so it may have eventual consistency.
+
+---
+
+### 4. **SASI (SSTable Attached Secondary Index)**
+- **Description**: SASI is a more advanced type of secondary index introduced in newer versions of Cassandra. It supports a wider range of queries, including **LIKE** and range queries.
+- **Use Case**: Suitable for text search and range queries, providing better performance than traditional secondary indexes for specific workloads.
+- **Syntax**:
+  ```sql
+  CREATE CUSTOM INDEX sasi_index ON users (name)
+  USING 'org.apache.cassandra.index.sasi.SASIIndex'
+  WITH OPTIONS = {
+      'mode': 'CONTAINS',
+      'analyzed': 'true',
+      'analyzer_class': 'org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer'
+  };
+  ```
+- **Query Example**:
+  ```sql
+  SELECT * FROM users WHERE name LIKE '%John%';
+  ```
+
+#### Benefits of SASI:
+- Supports advanced search functionality like prefix, suffix, and substring matching.
+- Efficient for low-cardinality or moderately distributed data.
+
+---
+
+### 5. **Custom Index**
+- **Description**: Allows developers to implement their own indexing mechanism by writing custom code.
+- **Use Case**: Useful for specialized use cases where built-in indexes do not suffice.
+- **Implementation**: Requires extending Cassandra's indexing capabilities programmatically.
+
+---
+
+### Comparison of Indexes
+| **Feature**              | **Primary Index** | **Secondary Index** | **Materialized View** | **SASI**           |
+|---------------------------|-------------------|----------------------|------------------------|--------------------|
+| Created automatically?    | Yes               | No                   | No                     | No                 |
+| Use case                 | Partition key     | Non-primary columns  | Alternate primary key  | Full-text search   |
+| Supports range queries    | No                | No                   | Yes                    | Yes                |
+| Best for high-cardinality | Yes               | No                   | Yes                    | Moderate           |
+| Query performance         | Best              | Moderate             | Good                   | Moderate           |
+
+---
+
+### Best Practices for Indexing in Cassandra
+1. **Avoid Overusing Secondary Indexes**:
+   - Prefer denormalizing your data or creating materialized views for better performance.
+2. **Use SASI Sparingly**:
+   - Suitable for specific workloads like text search but may introduce performance overhead for large datasets.
+3. **Denormalization First**:
+   - Cassandra's design favors denormalization and query-driven schema design over relying on indexes.
+4. **Leverage Materialized Views**:
+   - Use materialized views for alternate query patterns but monitor consistency and resource usage.
+
+By carefully choosing the right type of index, you can optimize query performance and maintain scalability in Cassandra.
+
 <sub>[back to top](#table-of-contents)</sub>
+
+### [DynamoDB](https://www.hellointerview.com/learn/system-design/deep-dives/dynamodb)
+
+**Global Secondary Index (GSI)** - An index with a partition key and optional sort key that differs from the table's partition key. GSIs allow you to query items based on attributes other than the table's partition key.
+
+**Local Secondary Index (LSI)** - An index with the same partition key as the table's primary key but a different sort key. LSIs enable range queries and sorting within a partition, providing an alternative to GSIs when querying items with the same partition key.
+
+
+When designing global applications in your interview, simply mentioning Global Tables for cross-region replication is often sufficient.
+
+
+#### [<u>DAX (DynamoDB Accelerator)</u>](https://www.hellointerview.com/learn/system-design/deep-dives/dynamodb#dax-dynamodb-accelerator)
+Fun fact, Dynamo comes with a built-in, in-memory cache called DynamoDB Accelerator (DAX). So there may be no need to introduce additional services (Redis, MemchacheD) into your architecture, just enable DAX.   
+
+DAX is a caching service designed to enhance DynamoDB performance by delivering sub-millisecond response times for read-heavy workloads. Being native to DynamoDB, DAX requires no changes to application code; it simply needs to be enabled on your tables.  
+
+It operates as both a read-through and write-through cache, which means it automatically caches read results from DynamoDB tables and delivers them directly to applications, as well as writes data to both the cache and the underlying DynamoDB table. Cached items are invalidated when the corresponding data in the table is updated or when the cache reaches its size limit. 
+
+#### [<u>Change Data Capture (CDC) through DynamoDB Streams.</u>](https://www.hellointerview.com/learn/system-design/deep-dives/dynamodb#streams)
+Dynamo also has built-in support for Change Data Capture (CDC) through DynamoDB Streams. Streams capture changes to items in a table and make them available for processing in real-time. Any change event in a table, such as an insert, update, or delete operation, is recorded in the stream as a stream record to be consumed by downstream applications
+
+Helpful in the following cases:  
+-   Consistency with Elasticsearch
+-   Real-time Analytics
+-   Change Notifications
+
+#### Summary of Concurrency Control in DynamoDB
+
+| **Method**                  | **Use Case**                                                                 | **Key Features**                                                                                  |
+|-----------------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| **Optimistic Locking**       | Prevent conflicting updates based on versioning                            | Uses `ConditionExpression` to validate preconditions before writing                              |
+| **Atomic Counters**          | Increment or decrement values atomically                                   | Handles high-concurrency updates to numerical attributes                                         |
+| **Transactions**             | ACID-compliant, grouped operations                                         | Ensures all-or-nothing execution of multiple operations                                          |
+| **Conditional Writes**       | Insert, update, or delete only when specific conditions are met            | Prevents overwrites or duplicate entries                                                        |
+| **Last-Write Wins**          | Default conflict resolution when no conditions are specified               | May lead to data overwrites in concurrent scenarios                                              |
+| **Streams**                  | Detect and resolve conflicts in near real-time                             | Enables custom conflict resolution logic through stream processing                               |
+<sub>[back to top](#table-of-contents)</sub>
+
 ### Long Polling
 Client open a connection which is there for 5-10 minutes. And keep waiting for servers response. Good for scenarios where client is not staying long on the page.
 
