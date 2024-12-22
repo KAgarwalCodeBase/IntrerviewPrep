@@ -324,6 +324,7 @@ Helpful in the following cases:
 | **Conditional Writes**       | Insert, update, or delete only when specific conditions are met            | Prevents overwrites or duplicate entries                                                        |
 | **Last-Write Wins**          | Default conflict resolution when no conditions are specified               | May lead to data overwrites in concurrent scenarios                                              |
 | **Streams**                  | Detect and resolve conflicts in near real-time                             | Enables custom conflict resolution logic through stream processing                               |
+
 <sub>[back to top](#table-of-contents)</sub>
 
 ### Long Polling
