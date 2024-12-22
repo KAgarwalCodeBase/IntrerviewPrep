@@ -103,6 +103,26 @@ Use case:
 - Kafka will do the implicit retry at producer side.
 - Kafka does not do implicit retry at consumer side we need to do it and put the message in retry queue.
 
+Kafka's architecture is built around a distributed messaging system designed for high throughput, scalability, and fault tolerance. Key components include:
+
+1. **Producers**: Applications that publish (write) messages to Kafka topics.
+
+2. **Topics**: Logical channels where messages are categorized. Each topic is divided into partitions for parallelism.
+
+3. **Partitions**: Each topic has one or more partitions that store data sequentially. Each message within a partition has a unique offset.
+
+4. **Consumers**: Applications that subscribe to topics and read (consume) messages. Consumers are grouped into consumer groups for scalability and fault tolerance.
+
+5. **Brokers**: Kafka servers that store and serve messages. A Kafka cluster consists of multiple brokers.
+
+6. **ZooKeeper (deprecated in newer versions)**: Used for managing cluster metadata, leader election, and configuration management (replaced by Kafka’s internal quorum-based system in newer versions).
+
+7. **Replication**: Ensures fault tolerance by duplicating partitions across brokers. Each partition has one leader and several replicas; the leader handles all reads and writes, while replicas provide redundancy.
+
+8. **Producers and Consumers Coordination**: Kafka handles message delivery guarantees such as "at-most-once," "at-least-once," or "exactly-once" semantics.
+
+This architecture enables Kafka to handle real-time data streams efficiently and reliably.
+
 <sub>[back to top](#table-of-contents)</sub>
 
 ### [Cassandra](https://www.hellointerview.com/learn/system-design/deep-dives/cassandra)
