@@ -96,7 +96,6 @@ public class Singleton {
 }
 ```
 
-2
 ## [Builder Pattern](https://youtu.be/9XnsOpjclUg?si=a0VtB4Tp0aR3KKEm)
 - Pattern used to create objects made from a bunch of other objects.
 - When you want to build an object made up from other objects.
