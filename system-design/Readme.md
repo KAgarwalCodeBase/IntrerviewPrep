@@ -2,9 +2,13 @@
 
 ## Table of Contents
 -   [Important Topics](#important-topics)
+    - [CAP Theorem](#cap-theorem)
+    - [Consistent Hashing](#consistent-hashing)
+    - [Bloom Filter](#bloom-filter)
     - [AWS Opensearch](#aws-opensearch)
     - [Redis](#redis)
     - [Kafka](#kafka)
+    - [Cassandra](#cassandra)
     - [Long Polling](#long-polling)
     - [Web Sockets](#web-sockets)
     - [Server Sent Events](#server-sent-events-sse)
@@ -23,6 +27,47 @@ Flink/Aws firehouse / Spark streams: Aggregator services
 count min sketch / map reduce 
 
 ## Important Topics:
+
+### [CAP Theorem](https://en.wikipedia.org/wiki/CAP_theorem)
+**Strong consistency**
+- implement distributed transactions
+- limit to a single node
+- discuss consensus protocols
+- accept higher latency
+- Example tools
+    - PostgreSQL
+    - Trad RDBMS
+    - Spanner
+    - NoSQL with strong consistency mode (DynamoDB)
+
+
+
+**Availability**
+- use multiple replicas
+- CDC and eventual consistency is ok
+- Example tools
+    - DynamoDB (in multi-AZ mode)
+    - Cassandra
+
+#### Different types of consistency
+1. Strong Consistency: all reads reflect most recent write
+2. Causal Consistency: related events appear in order
+3. Read-your-writes Consistency: user sees their own updates
+4. Eventual Consistency: updates will propagate eventually
+
+<sub>[back to top](#table-of-contents)</sub>
+
+### [Consistent Hashing](https://www.youtube.com/watch?v=zaRkONvyGr8)
+Consistent hashing is a fundamental technique used in distributed systems to partition data / load across machines in a way that prioritizes evenness of distribution while minimizing re-mapping of data if a node enters or leaves the system.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+### [Bloom filter](https://www.youtube.com/watch?v=gBygn3cVP80)
+A Bloom filter is a space-efficient probabilistic data structure used to test whether an element is a member of a set. It is designed for scenarios where fast lookups and memory efficiency are crucial, but it allows for a small probability of false positives.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+
 ### AWS Opensearch 
 Node query caching from all of the clusters of elastic seach if cache 10k queries in LRU basis.
 
@@ -60,6 +105,41 @@ Use case:
 
 <sub>[back to top](#table-of-contents)</sub>
 
+### [Cassandra](https://www.hellointerview.com/learn/system-design/deep-dives/cassandra)
+
+**Data Model**  
+Keyspaces->Table->Row->Column
+
+**Partition Key** - One or more columns that are used to determine what partition the row is in. We'll discuss partitioning of data later in this deep-dive.  
+**Clustering Key** - Zero or more columns that are used to determine the sorted order of rows in a table. Data ordering is important depending on one's data modeling needs, so Cassandra gives users control over this via the clustering keys.
+
+**Partitioning**  
+- Uses consistent hashing  
+
+**Replication**
+- NetworkTopologyStrategy
+- SimpleStrategy.
+
+**Consistency**  
+- Cassandra does not support any notions of ACID gurantees.
+- It only supports atomic and isolated writes at the row level in partition.
+- Cassandra supports different consistency level.
+example: one, two, three, quorum, any etc.
+- One notable consistency level to understand is QUORUM. QUORUM requires a majority (n/2 + 1) of replicas to respond. Applying QUORUM to both reads and writes guarantees that writes are visible to reads because at least one overlapping node is guaranteed to participate in both a write and a read. 
+
+**Storage Model**
+- Cassandra Uses Log Structured Merge (LSM) Tree. The 3 constructs core to the LSM tree index are:
+- Commit Log - This basically is a write-ahead-log to ensure durability of writes for Cassandra nodes.
+- Memtable - An in-memory, sorted data structure that stores write data. It is sorted by primary key of each row.
+- SSTable - A.k.a. "Sorted String Table." Immutable file on disk containing data that was flushed from a previous Memtable.
+![Write in Cassandra](./assets/storage_cassandra.png)
+
+- When reading data for a particular key, Cassandra reads the Memtable first, which will have the latest data. If the Memtable does not have the data for the key, Cassandra leverages a bloom filter to determine which SSTables on disk might have the data. It then reads the SSTables in order from newest to oldest to find the latest data for the row. 
+
+**Falut Tolerance**  
+Nodes independently detect failures during gossip, temporarily storing write data as hints for offline nodes to ensure data consistency and recovery when they rejoin the cluster.
+
+<sub>[back to top](#table-of-contents)</sub>
 ### Long Polling
 Client open a connection which is there for 5-10 minutes. And keep waiting for servers response. Good for scenarios where client is not staying long on the page.
 
