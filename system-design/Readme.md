@@ -10,6 +10,7 @@
     - [Kafka](#kafka)
     - [Cassandra](#cassandra)
     - [DynamoDB](#dynamodb)
+    - [PostgreSQL](#postgresql)
     - [Long Polling](#long-polling)
     - [Web Sockets](#web-sockets)
     - [Server Sent Events](#server-sent-events-sse)
@@ -29,7 +30,7 @@ count min sketch / map reduce
 
 ## Important Topics:
 
-### [CAP Theorem](https://en.wikipedia.org/wiki/CAP_theorem)
+## [CAP Theorem](https://en.wikipedia.org/wiki/CAP_theorem)
 **Strong consistency**
 - implement distributed transactions
 - limit to a single node
@@ -58,23 +59,23 @@ count min sketch / map reduce
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Consistent Hashing](https://www.youtube.com/watch?v=zaRkONvyGr8)
+## [Consistent Hashing](https://www.youtube.com/watch?v=zaRkONvyGr8)
 Consistent hashing is a fundamental technique used in distributed systems to partition data / load across machines in a way that prioritizes evenness of distribution while minimizing re-mapping of data if a node enters or leaves the system.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Bloom filter](https://www.youtube.com/watch?v=gBygn3cVP80)
+## [Bloom filter](https://www.youtube.com/watch?v=gBygn3cVP80)
 A Bloom filter is a space-efficient probabilistic data structure used to test whether an element is a member of a set. It is designed for scenarios where fast lookups and memory efficiency are crucial, but it allows for a small probability of false positives.
 
 <sub>[back to top](#table-of-contents)</sub>
 
 
-### AWS Opensearch 
+## AWS Opensearch 
 Node query caching from all of the clusters of elastic seach if cache 10k queries in LRU basis.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Redis](https://www.youtube.com/watch?v=fmT5nlEkl3U&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=2&pp=iAQB)
+## [Redis](https://www.youtube.com/watch?v=fmT5nlEkl3U&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=2&pp=iAQB)
 Where to use Redis:
 - ⁠basic rate limiting
 - ⁠⁠geo spacitial index
@@ -94,7 +95,7 @@ Where to use Redis:
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Kafka](https://www.youtube.com/watch?v=DU8o-OTeoCc&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=1&pp=iAQB)
+## [Kafka](https://www.youtube.com/watch?v=DU8o-OTeoCc&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=1&pp=iAQB)
 Use case: 
 - Multiple consumer. ex: Facebook Comments.
 - Inorder message processing. ex: Ticketmaster.
@@ -126,9 +127,10 @@ This architecture enables Kafka to handle real-time data streams efficiently and
 
 **Note**:  
 On good hardware, a single broker can store around 1TB of data and handle around 10,000 messages per second (this is very hand wavy as it depends on message size and hardware specs, but is a useful estimate)
+
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Cassandra](https://www.hellointerview.com/learn/system-design/deep-dives/cassandra)
+## [Cassandra](https://www.hellointerview.com/learn/system-design/deep-dives/cassandra)
 
 **Data Model**  
 Keyspaces->Table->Row->Column
@@ -289,7 +291,7 @@ By carefully choosing the right type of index, you can optimize query performanc
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [DynamoDB](https://www.hellointerview.com/learn/system-design/deep-dives/dynamodb)
+## [DynamoDB](https://www.hellointerview.com/learn/system-design/deep-dives/dynamodb)
 
 **Global Secondary Index (GSI)** - An index with a partition key and optional sort key that differs from the table's partition key. GSIs allow you to query items based on attributes other than the table's partition key.
 
@@ -327,31 +329,161 @@ Helpful in the following cases:
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Long Polling
+## [PostgreSQL](https://www.hellointerview.com/learn/system-design/deep-dives/postgres)
+### Read Performance
+---
+
+**Basic Indexes**  
+
+Postgres uses B-tree indexes, which work great for:
+- Exact matches (WHERE email = 'user@example.com')
+- Range queries (WHERE created_at > '2024-01-01')
+- Sorting (ORDER BY username if the ORDER BY column match the index columns' order)
+
+**GIN Indexes**
+
+Postgres supports `full-text search` out of the box using `GIN (Generalized Inverted Index)` indexes.
+
+For many applications, this built-in search capability means you don't need a separate Elasticsearch cluster. It supports everything from:
+- Word stemming (finding/find/finds all match)
+- Relevance ranking
+- Multiple languages
+- Complex queries with AND/OR/NOT
+
+While PostgreSQL's full-text search is powerful, it may not fully replace Elasticsearch for all use cases. Consider Elasticsearch when you need:
+- More sophisticated relevancy scoring
+- Faceted search capabilities
+- Fuzzy matching and "search as you type" features
+- Real-time index updates
+- Distributed search across very large datasets
+- Advanced analytics and aggregations
+- JSONB columns with GIN indexes are particularly useful when you need flexible metadata
+
+**PostGIS**  
+
+Geospatial Search with PostGIS. While not built into PostgreSQL core, the PostGIS extension adds powerful spatial capabilities.  
+PostGIS is incredibly powerful - it can handle:
+- Different types of spatial data (points, lines, polygons)
+- Various distance calculations (as-the-crow-flies, driving distance)
+- Spatial operations (intersections, containment)
+- Different coordinate systems  
+
+**Covering indexes**  
+
+Covering indexes can make queries significantly faster because PostgreSQL can satisfy the entire query just from the index without touching the table. The trade-off is that the index takes up more space and writes become slightly slower.
+
+**Partial indexes** 
+
+Partial indexes are particularly effective in scenarios where most of your queries only need a subset of rows, when you have many "inactive" or "deleted" records that don't need to be indexed, or when you want to reduce the overall size and maintenance overhead of your indexes. 
+
+### Write Performance
+- Transaction log(WAL) Write(Disk)
+- Buffer Cache Update(Memory)
+- Background Writer[Memory -> Disk]
+- Index update[Memory & Disk]
+
+### Write Performance Optimizations
+- Vertical Scaling
+- Batch Processing
+- Table Partitioning
+- Sharding
+
+### Practical Performance Limit
+***Query Performance:***
+- Simple indexed lookups: thousands per second per core
+- Complex joins: hundreds per second
+- Full-table scans: depends heavily on whether data fits in memory
+
+***Scale Limits:***
+- Tables start getting unwieldy past 100M rows
+- Full-text search works well up to tens of millions of documents
+- Complex joins become challenging with tables >10M rows
+- Performance drops significantly when working set exceeds available RAM
+
+***Throughput Limitations***
+
+A well-tuned PostgreSQL instance on good (not great) hardware can handle:
+- Simple inserts: ~5,000 per second per core
+- Updates with index modifications: ~1,000-2,000 per second per core
+- Complex transactions (multiple tables/indexes): Hundreds per second
+- Bulk operations: Tens of thousands of rows per second
+
+### Difference between Sharding and Table Partitioning
+
+| **Feature**           | **Sharding**                                   | **Table Partitioning**                        |
+|------------------------|-----------------------------------------------|-----------------------------------------------|
+| **Scope**             | Across multiple servers/databases             | Within a single database instance             |
+| **Granularity**       | Database-level or application-level            | Table-level                                   |
+| **Scalability**       | Horizontal scaling (add more servers)          | Vertical scaling (optimize within one server) |
+| **Management**        | Requires external logic to coordinate shards  | Managed within the database system            |
+| **Implementation**    | Separate databases per shard, distributed via shard key | Single table split into partitions based on partition key |
+| **Performance**       | Distributes traffic and storage across servers | Improves query performance within a single database |
+| **Fault Tolerance**   | High: Failure of one shard doesn't impact others | Limited: Depends on the single server's availability |
+| **Complexity**        | High: Requires application-level changes       | Moderate: Requires careful partitioning strategy |
+| **Use Case**          | Massive datasets or high traffic distributed across servers | Optimizing performance of large tables in a single database |
+| **Example Key**       | Shard key (e.g., user ID, region)              | Partition key (e.g., date range, category)    |
+
+
+### Replication
+
+Replication - async, sync
+- Scale Reads: By creating read replica.
+- High Availability: Replication is not only for scaling it also brings reliability.
+
+
+
+### Row level locking Vs Serializable isolation
+
+
+| **Aspect**               | **Serializable Isolation**                                 | **Row-Level Locking**                                      |
+|--------------------------|------------------------------------------------------------|------------------------------------------------------------|
+| **Concurrency**           | Lower - transactions might need to retry on conflict       | Higher - only conflicts when touching the same rows        |
+| **Performance**           | More overhead - must track all read/write dependencies     | Less overhead - only locks specific rows                   |
+| **Use Case**              | Complex transactions where it's hard to know what to lock | When you know exactly which rows need atomic updates       |
+| **Complexity**            | Simple to implement but requires retry logic               | More explicit in code but no retries needed                |
+| **Error Handling**        | Must handle serialization failures                         | Must handle deadlock scenarios                             |
+| **Example**               | Complex financial calculations across multiple tables      | Auction bidding, inventory updates                        |
+| **Memory Usage**          | Higher - tracks entire transaction history                 | Lower - only tracks locks                                  |
+| **Scalability**           | Doesn’t scale as well with concurrent transactions         | Scales better when conflicts are rare                      |
+
+
+
+### Isolation levels in PostgreSQL
+
+| **Isolation Level**   | **Dirty Reads** | **Non-Repeatable Reads** | **Phantom Reads** | **Description**                                                       | **Use Case**                              |
+|-----------------------|-----------------|--------------------------|-------------------|-----------------------------------------------------------------------|-------------------------------------------|
+| **Read Uncommitted**   | Allowed         | Allowed                  | Allowed           | Transactions can read uncommitted data (dirty reads). PostgreSQL treats it like Read Committed. | Rarely used, similar to **Read Committed** in PostgreSQL. |
+| **Read Committed**     | Not Allowed     | Allowed                  | Allowed           | Each query sees committed data, but subsequent queries may see different data (non-repeatable reads). | **Default in PostgreSQL**. Suitable for general-purpose applications with less stringent consistency requirements. |
+| **Repeatable Read**    | Not Allowed     | Not Allowed              | Allowed           | Guarantees that all queries within the transaction will see the same data. Prevents non-repeatable reads but allows phantom reads. | Suitable for applications requiring consistency across multiple queries, such as reporting. |
+| **Serializable**       | Not Allowed     | Not Allowed              | Not Allowed       | The highest level of isolation; transactions execute as if serial, preventing dirty reads, non-repeatable reads, and phantom reads. | Ideal for critical applications like banking or finance that require strict consistency. |
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## Long Polling
 Client open a connection which is there for 5-10 minutes. And keep waiting for servers response. Good for scenarios where client is not staying long on the page.
 
 If you need to give your clients near-realtime updates, you'll need a way for the clients to receive updates from the server. Long polling is a great way to do this that blends the simplicity and scalability of HTTP with the realtime updates of Websockets. With long polling, the client makes a request to the server and the server holds the request open until it has new data to send to the client. Once the data is sent, the client makes another request and the process repeats. Notably, you can use standard load balancers and firewalls with long polling - no special infrastructure needed.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Web sockets
+## Web sockets
 Bidirectional persistent connection.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Server Sent Events (SSE)
+## Server Sent Events (SSE)
 SSE is unidirection, only from server to client.
 
  Server Sent Events (SSE) are a great way to send updates from the server to the client. They're similar to long polling, but they're more efficient for unidirectional communication from the server to the client. SSE allows the server to push updates to the client whenever new data is available, without the client having to make repeated requests as in long polling. This is achieved through a single, long-lived HTTP connection, making it more suitable for scenarios where the server frequently updates data that needs to be sent to the client. Unlike Websockets, SSE is designed specifically for server-to-client communication and does not support client-to-server messaging. This makes SSE simpler to implement and integrate into existing HTTP infrastructure, such as load balancers and firewalls, without the need for special handling.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Change Data Capture
+## Change Data Capture
 - It is a process in which changes to primary data store put onto stream and then those change events can be consumed and something can be done with them.
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### [Elastic Search](https://www.youtube.com/watch?v=PuZvF2EyfBM&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=3)
+## [Elastic Search](https://www.youtube.com/watch?v=PuZvF2EyfBM&list=PL5q3E8eRUieUHnsz0rh0W6AzwdVJBwEK6&index=3)
 
 - For fast search queries, it uses a inverted index.
 - Elastic search support point in time search.
@@ -374,10 +506,10 @@ Notes:
 
 <sub>[back to top](#table-of-contents)</sub>
 
-### Choke Point
+## Choke Point
 - Using virtual queue.
 
-### [Secondary Indexes in Dynamo DB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html)
+## [Secondary Indexes in Dynamo DB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html)
 A secondary index is a data structure that contains a subset of attributes from a table, along with an alternate key to support Query operations. You can retrieve data from the index using a Query, in much the same way as you use Query with a table. A table can have multiple secondary indexes, which give your applications access to many different query patterns.
 
 <sub>[back to top](#table-of-contents)</sub>
