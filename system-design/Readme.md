@@ -2,6 +2,7 @@
 
 ## Table of Contents
 -   [Important Topics](#important-topics)
+    - [Memory Unit Chart](#memory-unit-chart)
     - [CAP Theorem](#cap-theorem)
     - [Consistent Hashing](#consistent-hashing)
     - [Bloom Filter](#bloom-filter)
@@ -29,6 +30,23 @@ Flink/Aws firehouse / Spark streams: Aggregator services
 count min sketch / map reduce 
 
 ## Important Topics:
+
+## Memory Unit Chart:
+
+| Unit              | Abbreviation | Equivalent                                                                 |
+|-------------------|--------------|---------------------------------------------------------------------------|
+| **Bit**           | b            | Smallest unit of data (0 or 1)                                            |
+| **Byte**          | B            | 8 bits                                                                    |
+| **Kilobyte**      | KB           | 1,024 bytes ≈ 10³ bytes                                                   |
+| **Megabyte**      | MB           | 1,024 kilobytes ≈ 10⁶ bytes                                              |
+| **Gigabyte**      | GB           | 1,024 megabytes ≈ 10⁹ bytes                                              |
+| **Terabyte**      | TB           | 1,024 gigabytes ≈ 10¹² bytes                                             |
+| **Petabyte**      | PB           | 1,024 terabytes ≈ 10¹⁵ bytes                                             |
+| **Exabyte**       | EB           | 1,024 petabytes ≈ 10¹⁸ bytes                                            |
+| **Zettabyte**     | ZB           | 1,024 exabytes ≈ 10²¹ bytes                                             |
+| **Yottabyte**     | YB           | 1,024 zettabytes ≈ 10²⁴ bytes                                           |
+
+<sub>[back to top](#table-of-contents)</sub>
 
 ## [CAP Theorem](https://en.wikipedia.org/wiki/CAP_theorem)
 **Strong consistency**
@@ -92,6 +110,41 @@ Where to use Redis:
 - Only way to shard the Redis is to choose the key on which we are going to shard the data.
 - Hotkey problem: append random number to the key.
 - To scale Redis thought about key space.
+
+### Redis Storage
+
+**Hash Slots:** Redis Cluster uses 16,384 hash slots to logically partition data. Each key is assigned to one of these slots, which are distributed across master nodes.
+
+**Nodes:** Redis nodes are the physical servers or instances that store data. Each node holds data for a subset of hash slots, and the amount of data a node can store depends on the memory (RAM) of that node (e.g., up to 256 GB per node).
+
+**Storage Capacity:** The storage capacity of a Redis Cluster depends on the number of nodes and the memory available on each node, not directly on hash slots. Adding more nodes increases the total storage of the cluster.
+
+### Performance
+**Single Instance:**
+- Redis can handle up to `100,000–200,000 read requests per second (RPS)` on a typical high-performance server.
+On optimized hardware (e.g., NVMe storage, high-speed CPUs), it can achieve 300,000+ RPS.  
+
+**Cluster:**
+- In a cluster, read throughput scales linearly with the number of nodes, assuming the workload is evenly distributed across them.
+For example, a `10-node Redis cluster could theoretically handle 1,000,000+ RPS.`
+
+### **Redis Capacity Summary Table**
+
+| **Capacity Type**               | **Single Node**                                   | **Redis Cluster**                                         |
+|----------------------------------|---------------------------------------------------|-----------------------------------------------------------|
+| **Storage Capacity**             | 100 GB – 256 GB (Recommended: 100 GB – 200 GB)    | Sum of **all master nodes** memory (e.g., 5 master nodes with 100 GB = 500 GB) |
+| **Max Read Throughput**          | 100,000 – 200,000 RPS per node                    | Sum of read throughput from **all replica nodes** (e.g., 10 master nodes and 30 replicas can handle **40 read requests simultaneously**) |
+| **Max Write Throughput**         | Tens of thousands of writes per second           | Sum of write throughput from **all master nodes** (e.g., 5 master nodes = **5 writes simultaneously**) |
+| **Recommended Read Scaling**     | Add **1–3 replicas per master node**              | Add **1-3 replicas per master node** to scale read throughput |
+| **Recommended Write Scaling**    | Add **more master nodes** for scaling            | Add **more master nodes** to increase write throughput |
+| **Total Cluster Read Throughput**| N/A                                               | Scales with the number of replicas (e.g., 1 master + 3 replicas = **4 read requests simultaneously**) |
+| **Total Cluster Write Throughput**| N/A                                              | Scales with the number of master nodes (e.g., 10 master nodes = **10 write requests simultaneously**) |
+| **Max Nodes in One Cluster**     | N/A                                               | Up to **1,000 nodes** (including both master and replica nodes) |
+| **Max Master Nodes**             | N/A                                               | **Up to 500 master nodes** (if using 1,000 nodes in total) |
+
+### **Summary**:
+- **Single Node**: Storage is limited by node memory, and throughput depends on hardware.
+- **Cluster**: Scales with the number of master and replica nodes. Up to **1,000 nodes** are supported, providing high scalability for both storage and throughput.
 
 <sub>[back to top](#table-of-contents)</sub>
 
@@ -288,6 +341,10 @@ Cassandra provides several types of indexes to support efficient data retrieval 
    - Use materialized views for alternate query patterns but monitor consistency and resource usage.
 
 By carefully choosing the right type of index, you can optimize query performance and maintain scalability in Cassandra.
+
+### Read Downside
+
+If you need to read a table with thousands of columns, you may have problems. Cassandra has limitations when it comes to the partition size and number of values: 100 MB and 2 billion respectively. So if your table contains too many columns, values or is too big in size, you won’t be able to read it quickly. Or even won’t be able to read it at all. And this is something to keep in mind. If the task doesn’t strictly require reading this number of columns, it’s always better to split such tables into multiple pieces. Besides, you should remember that the more columns the table has, the more RAM you’ll need to read it.
 
 <sub>[back to top](#table-of-contents)</sub>
 
@@ -538,6 +595,7 @@ https://www.hellointerview.com/blog/mastering-estimation
 -  Fan-out
 - gRPC (Google Remote Procedure Call)
 - Message Broker
+- [Benchmarking Cassandra Scalability on AWS — Over a million writes per second](https://netflixtechblog.com/benchmarking-cassandra-scalability-on-aws-over-a-million-writes-per-second-39f45f066c9e)
 
 <sub>[back to top](#table-of-contents)</sub>
 
