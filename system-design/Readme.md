@@ -8,6 +8,7 @@
     - [Bloom Filter](#bloom-filter)
     - [AWS Opensearch](#aws-opensearch)
     - [Redis](#redis)
+    - [AWS SQS](#aws-sqs)
     - [Kafka](#kafka)
     - [Cassandra](#cassandra)
     - [DynamoDB](#dynamodb)
@@ -145,6 +146,15 @@ For example, a `10-node Redis cluster could theoretically handle 1,000,000+ RPS.
 ### **Summary**:
 - **Single Node**: Storage is limited by node memory, and throughput depends on hardware.
 - **Cluster**: Scales with the number of master and replica nodes. Up to **1,000 nodes** are supported, providing high scalability for both storage and throughput.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## AWS SQS
+- AWS SQS provides the retries at consumer side.
+- AWS SQS support visibility time out. If one consumer pulls out the message then it become invisible for other workers for particular visibility time out.
+- If worker successfully processed the message it will tell SQS to delete it. Otherwise if worker went down then after visibility time out message is available for other workers.
+
+<sub>tag: web crawler<sub>
 
 <sub>[back to top](#table-of-contents)</sub>
 
