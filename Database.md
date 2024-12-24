@@ -3,7 +3,7 @@
 - [Normal Forms in Databases](#normal-forms-in-database)
 - [Joins in Database](#joins-in-database)
 
-## OLAP VS OLTP Databses
+## OLAP VS OLTP Database
 | **Aspect**      | **OLAP (Online Analytical Processing)**                                                                 | **OLTP (Online Transaction Processing)**                                                    |
 |------------------|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | **Purpose**      | Used for data analysis, reporting, and decision-making.                                                | Used for managing real-time transactional data.                                            |
@@ -13,7 +13,7 @@
 
 <sub>[back to top](#table-of-contents)</sub>
 
-## Normal Forms in DataBase
+## Normal Forms in Database
 
 | **Normal Form**         | **Definition**                                                                                     | **Key Rule**                                                                                     |
 |--------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
