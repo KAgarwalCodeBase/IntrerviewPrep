@@ -16,20 +16,23 @@
 - [Does Singleton Thread Safe in JAVA](#does-signleton-thread-safe-in-java)
 - [@Service Vs @Component](#service-vs-component)
 - [Immutable classes in java](#immutable-classes-in-java)
+- [HashMap Internals in JAVA](#hashmap-internals-in-java)
+- [Priority Queue Internals in JAVA](#priorityqueue-internals-in-java)
 
-### Marker Interfaces in JAVA
+
+## Marker Interfaces in JAVA
 -   Cloneable
 - Serializable
 
 [back to top](#index)
 
-### Order of execution of initialization block and constructor in java.
+## Order of execution of initialization block and constructor in java.
 
 `Parent class static` → `Child class static` → `Parent class instance` → `Parent constructor` → `Child class instance` → `Child constructor`.
 
 [back to top](#index)
 
-### Object Class & it's list of methods.
+## Object Class & it's list of methods.
 The **`Object` class** in Java is the root of the class hierarchy. Every class in Java directly or indirectly inherits from the `Object` class, which means every class has access to its methods. Below is a detailed explanation of the methods provided by the `Object` class, with examples.
 
 ---
@@ -328,7 +331,7 @@ These methods provide foundational behavior to all Java objects and enable criti
 
 [back to top](#index)
 
-### **`clone()` Method in Java**
+## **`clone()` Method in Java**
 
 1. **Purpose**:
    - The `clone()` method creates a copy of an object. It performs a **shallow copy** by default and duplicates only the fields of the object, not the referenced objects.
@@ -368,7 +371,7 @@ These methods provide foundational behavior to all Java objects and enable criti
 
 [back to top](#index)
 
-### **Transient Fields in Java**
+## **Transient Fields in Java**
 
 - **Definition**: Transient fields in Java are not included in the serialized form of an object. They are marked using the `transient` keyword.
 
@@ -408,7 +411,7 @@ class User implements Serializable {
 
 [back to top](#index)
 
-### **Serialization/Deserialization in Java (Updated Summary)**
+## **Serialization/Deserialization in Java (Updated Summary)**
 
 - **Serialization**: Converts an object into a **byte stream** for storage (e.g., file) or transmission (e.g., over a network). Captures the object's state and class metadata.
 
@@ -473,7 +476,7 @@ This mechanism is best suited for simple object storage and transmission scenari
 [back to top](#index)
 
 
-### **Atomic, Volatile, and Synchronized**
+## **Atomic, Volatile, and Synchronized**
 
 ---
 
@@ -538,7 +541,7 @@ This mechanism is best suited for simple object storage and transmission scenari
 
 [back to top](#index)
 
-### **Object Finalization in Java**
+## **Object Finalization in Java**
 
 - **Definition**: Finalization is the process where the **`finalize()`** method is called by the **garbage collector** before reclaiming an object's memory.
 - **Method**: 
@@ -589,7 +592,7 @@ try (FileInputStream fis = new FileInputStream("file.txt")) {
 
 [back to top](#index)
 
-### **StringBuffer vs StringBuilder**
+## **StringBuffer vs StringBuilder**
 
 `StringBuffer` and `StringBuilder` are classes in Java used to manipulate strings dynamically. Both are mutable, meaning their content can be modified without creating a new object. However, they differ primarily in terms of **thread safety** and **performance**.
 
@@ -659,7 +662,7 @@ public class StringBuilderExample {
 
 [back to top](#index)
 
-### Comparison of some **similar data structures** in Java based on functionality, thread-safety, performance, and usage:
+## Comparison of some **similar data structures** in Java based on functionality, thread-safety, performance, and usage:
 
 ---
 
@@ -755,7 +758,7 @@ public class StringBuilderExample {
 - Modern data structures (`ArrayList`, `Deque`, `ConcurrentHashMap`) are preferred over legacy ones (`Vector`, `Hashtable`, `Stack`).
 
 [back to top](#index)
-### **Difference Between Checked Exceptions, Unchecked Exceptions, and Errors**
+## **Difference Between Checked Exceptions, Unchecked Exceptions, and Errors**
 
 ---
 
@@ -848,7 +851,7 @@ public class ErrorExample {
 
 [back to top](#index)
 
-### **Annotations in Java**
+## **Annotations in Java**
 
 Annotations are **metadata** in Java that provide additional information about the code without affecting its execution. They are used for **compiler instructions**, **runtime configurations**, and **code generation**.
 
@@ -900,12 +903,13 @@ Annotations improve code clarity, reduce boilerplate, and simplify configuration
 
 [back to top](#index)
 
-### Collection Hierarchy
-![Collections](../assets/Collections-in-Java.png)
+## Collection Hierarchy
+
+![Collections](./assets/Collections-in-Java.png)
 
 [back to top](#index)
 
-### **Making a Class Thread-Safe in Java**
+## **Making a Class Thread-Safe in Java**
 
 A **thread-safe class** ensures that its methods or operations behave correctly when accessed by multiple threads concurrently. Below are various techniques to achieve thread safety in Java:
 
@@ -1216,7 +1220,7 @@ By using these approaches, you can make a singleton class thread-safe.
 
 [back to top](#index)
 
-### **Singleton Vs Static Class in JAVA**  
+## **Singleton Vs Static Class in JAVA**  
 - **Static Classes** are used for utility functions and are stateless.  
 - **Singleton Classes** ensure a single instance exists and allow state management, flexibility, and testability.  
 - Singleton is better for scenarios needing inheritance, dependency injection, or polymorphism.
@@ -1238,7 +1242,7 @@ By using these approaches, you can make a singleton class thread-safe.
 [back to top](#index)
 
 
-### @Service Vs @Component
+## @Service Vs @Component
 
 @Service: A specialization of @Component for service layer classes, indicating business logic.  
 @Component: General-purpose annotation for any Spring-managed bean.  
@@ -1247,7 +1251,7 @@ Both perform the same function, but `@Service provides semantic clarity.`
 
 [back to top](#index)  
 
-### **Immutable Classes in Java**
+## **Immutable Classes in Java**
 
 An **immutable class** is a class whose **state** (i.e., its fields) cannot be **modified** after it is created.
 
@@ -1303,3 +1307,86 @@ Non-Thread Safe
 -   HashpMap
 -   ArrayList
 -   LinkedList
+
+
+## **HashMap Internals in Java**
+
+1. **Underlying Data Structure**: 
+   - HashMap uses an **array of nodes (buckets)** as its underlying data structure.
+   - Each node is a linked list in Java 7 and a **combination of a linked list and a red-black tree** in Java 8+ for collision handling.
+
+2. **Key Hashing**:
+   - Keys are hashed using the `hashCode()` method.
+   - The hash is used to compute the bucket index via `(hash & (n - 1))`, where `n` is the array size.
+
+3. **Collision Handling**:
+   - When multiple keys map to the same bucket:
+     - Java 7: Collisions are resolved using a **singly linked list**.
+     - Java 8+: If collisions exceed a threshold (default 8), the linked list converts to a **red-black tree** for faster lookups (\( O(\log n) \)).
+
+4. **Resizing**:
+   - HashMap dynamically resizes (doubles its size) when the number of elements exceeds the **load factor** (default: 0.75).
+   - During resizing, all elements are **rehased** to the new bucket locations.
+
+5. **Null Handling**:
+   - HashMap allows one `null` key and multiple `null` values.
+
+6. **Thread Safety**:
+   - HashMap is **not thread-safe**. Use `ConcurrentHashMap` for thread-safe operations.
+
+7. **Time Complexity**:
+   - **Best Case**: \( O(1) \) for insertion, deletion, and retrieval.
+   - **Worst Case**: \( O(n) \) (when all keys collide in one bucket and form a linked list).
+
+---
+
+### **Key Features**
+- Fast key-based lookups with an average complexity of \( O(1) \).
+- Balances space and time efficiency with its load factor and collision-handling mechanisms.
+
+[back to top](#index)  
+
+
+## **PriorityQueue Internals in Java**
+
+1. **Underlying Data Structure**:
+   - A `PriorityQueue` is implemented using a **binary heap**, which is represented as a **dynamic array** (`Object[]`).
+   - It is a **min-heap** by default, where the smallest element is at the root.
+
+2. **Order of Elements**:
+   - The heap maintains a **partial order**:
+     - The root is the smallest (or highest-priority) element.
+     - There is no guarantee of sorting between sibling nodes.
+
+3. **Heap Operations**:
+   - **Insertion (`offer()` / `add()`)**:
+     - Adds the element at the end of the heap and then performs **heapify-up** to restore the heap property.
+   - **Removal (`poll()` / `remove()`)**:
+     - Removes the root element (highest priority).
+     - Replaces it with the last element in the heap and performs **heapify-down** to maintain the heap property.
+   - **Peek (`peek()`)**:
+     - Returns the root element without removing it.
+
+4. **Custom Order**:
+   - You can define custom ordering by passing a `Comparator` to the `PriorityQueue` constructor.
+   - For example, to create a **max-heap**, use a comparator that reverses natural ordering.
+
+5. **Dynamic Resizing**:
+   - The internal array grows automatically when its capacity is exceeded, typically doubling in size.
+
+6. **Time Complexity**:
+   - **Insertion**: \( O(\log n) \) (due to heapify-up).
+   - **Removal (poll)**: \( O(\log n) \) (due to heapify-down).
+   - **Peek**: \( O(1) \) (direct access to the root).
+
+7. **Thread Safety**:
+   - `PriorityQueue` is **not thread-safe**. Use `PriorityBlockingQueue` for concurrent operations.
+
+---
+
+### **Key Features**
+- Efficient for priority-based processing, such as scheduling or Dijkstra’s algorithm.
+- Flexible with custom comparators for different priority rules.
+- Maintains the heap property for quick access to the highest-priority element.
+
+[back to top](#index)  

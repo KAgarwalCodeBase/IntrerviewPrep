@@ -1,3 +1,4 @@
+package java;
 import java.io.*;
 
 class Address implements Serializable {
