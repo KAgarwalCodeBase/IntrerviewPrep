@@ -19,6 +19,18 @@
 - [HashMap Internals in JAVA](#hashmap-internals-in-java)
 - [Priority Queue Internals in JAVA](#priorityqueue-internals-in-java)
 
+## Access Modifier in JAVA
+Access modifiers in Java are keywords that control the visibility and accessibility of classes, methods, constructors, and variables. They determine how other parts of the program can interact with a particular member or class.
+
+| **Access Modifier** | **Within Class** | **Within Package** | **Outside Package (Child Class)** | **Outside Package** |
+|----------------------|------------------|---------------------|------------------------------------|----------------------|
+| **public**           | ✔               | ✔                   | ✔                                  | ✔                   |
+| **protected**        | ✔               | ✔                   | ✔                                  | ✘                   |
+| **default** *(no modifier)* | ✔               | ✔                   | ✘                                  | ✘                   |
+| **private**          | ✔               | ✘                   | ✘                                  | ✘                   |
+
+
+[back to top](#index)
 
 ## Marker Interfaces in JAVA
 -   Cloneable

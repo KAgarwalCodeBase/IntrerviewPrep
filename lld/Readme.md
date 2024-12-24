@@ -5,8 +5,11 @@
 - [Observer Pattern](#observer-pattern)
 - [Abstract Factory Pattern](#abstract-factory-design-pattern)
 - [Singleton Pattern](#singleton-pattern)
+- [Builder Pattern](#builder-pattern)
+- [Prototype Pattern](#prototype-pattern)
 
 
+<!-- State, Factory, Decorator, Command. -->
 
 ## Encapsulation: It's protect our data.
 ```
@@ -97,11 +100,15 @@ public class Singleton {
 ```
 
 ## [Builder Pattern](https://youtu.be/9XnsOpjclUg?si=a0VtB4Tp0aR3KKEm)
+
+The Builder Pattern is a creational design pattern used in software development to construct complex objects step by step. It provides a way to build objects that might require multiple steps or components, without needing to directly call the constructor or know all the intricate details of object creation.
 - Pattern used to create objects made from a bunch of other objects.
 - When you want to build an object made up from other objects.
 - When you want the creation of these parts to be independent of the main object.
 - Hide the creation of the parts from the client so both aren't dependent.
 - The builder knows the specifics and nobody else does.
+
+[Code Link](https://www.newthinktank.com/2012/09/builder-design-pattern-tutorial/)
 
 ## [Prototype Pattern](https://youtu.be/AFbZhRL0Uz8?si=Sx-JHwlswc6EYutU)
 - Creating new objects (instances) by cloning (copying) other objects.
