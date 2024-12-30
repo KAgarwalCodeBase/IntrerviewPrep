@@ -6,7 +6,7 @@
 - [Object Class & it's list of method.](#object-class--its-list-of-methods)
 - [Clone Method in JAVA](#clone-method-in-java)
 - [Transient Fields in JAVA](#transient-fields-in-java)
-- [Serialization](#serializationdeserialization-in-java-updated-summary)
+- [Serialization/Deserialization in JAVA](#serializationdeserialization-in-java)
 - [Copy Constructor in JAVA](#copy-constructor-in-java)
 - [Atomic, Volatile & Synchronized](#atomic-volatile-and-synchronized)
 - [Object Finalization in Java](#object-finalization-in-java)
@@ -439,7 +439,7 @@ class User implements Serializable {
 
 [back to top](#index)
 
-## **Serialization/Deserialization in Java (Updated Summary)**
+## **Serialization/Deserialization in Java**
 
 - **Serialization**: Converts an object into a **byte stream** for storage (e.g., file) or transmission (e.g., over a network). Captures the object's state and class metadata.
 
