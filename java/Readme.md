@@ -1,4 +1,6 @@
 ### Index
+- [Testing Tools](#testing-tools)
+- [Access Modifier](#access-modifier-in-java)
 - [Marker Interfaces in JAVA](#marker-interfaces-in-java)
 - [Order of Execution of Initialization block and constructor](#order-of-execution-of-initialization-block-and-constructor-in-java)
 - [Object Class & it's list of method.](#object-class--its-list-of-methods)
@@ -18,6 +20,19 @@
 - [Immutable classes in java](#immutable-classes-in-java)
 - [HashMap Internals in JAVA](#hashmap-internals-in-java)
 - [Priority Queue Internals in JAVA](#priorityqueue-internals-in-java)
+- [OOPs Principle](#oops-principles)
+- [Difference Between Interface and Abstract Class in JAVA](#difference-between-interface-and-abstract-class-in-java)
+
+## Testing Tools
+Testing tools in java JUnit, Mockito, Spring test, JMeter, Selenium, SonarQube, Jenkins, Postman
+
+Unit Testing  
+Mocking:   
+- Stub->Replicated the behaviour of API
+- Mock->Validating the interaction or behaviour of components.
+
+
+[back to top](#index)
 
 ## Access Modifier in JAVA
 Access modifiers in Java are keywords that control the visibility and accessibility of classes, methods, constructors, and variables. They determine how other parts of the program can interact with a particular member or class.
@@ -1402,3 +1417,138 @@ Non-Thread Safe
 - Maintains the heap property for quick access to the highest-priority element.
 
 [back to top](#index)  
+
+## OOPs Principles
+### Encapsulation
+Encapsulation means bundling the data (fields) and methods that operate on that data into a single unit, typically a class. It also involves restricting direct access to some components using access modifiers.
+### Polymorphism
+Polymorphism allows methods to have the same name but behave differently based on the object or context.
+
+**Types of Polymorphism:**
+
+**Compile-time (Method Overloading):** Multiple methods with the same name but different parameters.  
+
+**Runtime (Method Overriding):** Subclass provides a specific implementation of a method declared in the parent class.
+### Inheritance
+Inheritance allows a class to inherit the fields and methods of another class, promoting code reuse.
+### Abstraction
+Abstraction hides implementation details and shows only essential features. It can be achieved using:
+
+**Abstract Classes:** Classes that cannot be instantiated and may have abstract (incomplete) methods.  
+**Interfaces:** Fully abstract contracts for classes to implement.
+
+### Integrated Example: Ride-Sharing Application
+A ride-sharing application like Uber or Lyft uses all OOP concepts:
+
+**`Encapsulation:`**  
+The Rider class encapsulates personal details like name and phone number.
+The Driver class encapsulates license information and ratings.
+
+**`Inheritance:`**  
+A Vehicle class acts as the base for Car, Bike, and AutoRickshaw.
+
+**`Polymorphism:`**  
+The Ride class can handle different types of rides (e.g., shared, single, luxury) through polymorphic behavior.
+
+**`Abstraction:`**  
+Abstract interfaces like PaymentMethod allow adding multiple payment options (credit card, wallet, UPI) without changing the core logic.
+
+[back to top](#index)  
+
+## Difference Between Interface and Abstract Class in JAVA
+The key differences between an **interface** and an **abstract class** in Java are rooted in their purpose, features, and use cases. Here's a detailed comparison:
+
+---
+
+| **Feature**               | **Interface**                                                 | **Abstract Class**                                           |
+|---------------------------|--------------------------------------------------------------|-------------------------------------------------------------|
+| **Purpose**               | Provides a contract that classes must implement.             | Serves as a base class to provide common functionality.     |
+| **Inheritance**           | A class can implement multiple interfaces (multiple inheritance). | A class can extend only one abstract class (single inheritance). |
+| **Abstract Methods**      | All methods are implicitly abstract (default since Java 8 allows `default` and `static` methods). | Can have both abstract and concrete (implemented) methods.  |
+| **Access Modifiers for Methods** | Methods are implicitly `public`.                                  | Methods can have any access modifier (e.g., `private`, `protected`, `public`). |
+| **Fields**                | Can only have `static final` (constant) fields.              | Can have instance fields, with any access modifier.         |
+| **Constructors**          | Cannot have constructors.                                    | Can have constructors to initialize state or perform setup. |
+| **Default Behavior**      | Cannot provide concrete methods (except using `default` or `static` methods since Java 8). | Can provide default (concrete) behavior for methods.        |
+| **Implementation**        | A class implementing an interface must provide implementations for all its abstract methods (unless it is abstract itself). | A subclass must implement all abstract methods of the abstract class (unless it is abstract itself). |
+| **Use Case**              | Used for defining a contract or behavior that multiple classes can implement. | Used when classes share common functionality and inheritance is required. |
+| **Example**               | `interface Drawable { void draw(); }`                        | `abstract class Shape { abstract void draw(); }`            |
+
+---
+
+### **When to Use an Interface**
+1. When multiple classes need to share the same behavior but are not logically related by inheritance.
+2. When you want to achieve multiple inheritance in Java.
+3. When defining a contract that unrelated classes can implement, e.g., `Runnable`, `Comparable`.
+
+**Example:**
+```java
+interface Flyable {
+    void fly();
+}
+
+class Bird implements Flyable {
+    public void fly() {
+        System.out.println("Bird is flying.");
+    }
+}
+
+class Airplane implements Flyable {
+    public void fly() {
+        System.out.println("Airplane is flying.");
+    }
+}
+```
+
+---
+
+### **When to Use an Abstract Class**
+1. When classes share common functionality and inheritance is required.
+2. When you need to define fields or methods that subclasses can inherit or override.
+3. When you want to partially implement behavior that subclasses can extend.
+
+**Example:**
+```java
+abstract class Vehicle {
+    String name;
+
+    void start() {
+        System.out.println(name + " is starting.");
+    }
+
+    abstract void drive(); // Abstract method
+}
+
+class Car extends Vehicle {
+    void drive() {
+        System.out.println("Car is driving.");
+    }
+}
+```
+
+---
+
+### **Java 8 and Beyond: Convergence of Interfaces and Abstract Classes**
+Since Java 8, interfaces can have:
+- **Default Methods:** Provide a default implementation.
+- **Static Methods:** Behave like utility methods.
+- **Private Methods (Java 9+):** Allow code reuse within the interface.
+
+This blurs the lines between interfaces and abstract classes but does not eliminate the fundamental differences.
+
+**Example of Default Method in Interface:**
+```java
+interface Printable {
+    default void print() {
+        System.out.println("Default print implementation.");
+    }
+}
+```
+
+---
+
+### **Summary**
+- Use **interfaces** to define a contract for behavior across unrelated classes.
+- Use **abstract classes** to provide a base for related classes with shared state or functionality.
+
+[back to top](#index)  
+
