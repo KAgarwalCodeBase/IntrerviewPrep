@@ -7,6 +7,7 @@
 - [Clone Method in JAVA](#clone-method-in-java)
 - [Transient Fields in JAVA](#transient-fields-in-java)
 - [Serialization](#serializationdeserialization-in-java-updated-summary)
+- [Copy Constructor in JAVA](#copy-constructor-in-java)
 - [Atomic, Volatile & Synchronized](#atomic-volatile-and-synchronized)
 - [Object Finalization in Java](#object-finalization-in-java)
 - [StringBuffer Vs StringBuilder](#stringbuffer-vs-stringbuilder)
@@ -502,6 +503,103 @@ This mechanism is best suited for simple object storage and transmission scenari
 
 [back to top](#index)
 
+## **Copy Constructor in Java**
+
+A **copy constructor** in Java is used to create a new object as a copy of an existing object. It takes an object of the same class as a parameter and duplicates its content. 
+
+---
+
+### **Syntax**
+```java
+public ClassName(ClassName other) {
+    // Copy fields from `other` to the new object
+    this.field1 = other.field1;
+    this.field2 = other.field2;
+}
+```
+
+---
+
+### **Key Concepts**
+
+1. **Shallow Copy**:
+   - Copies primitive fields and object references. For reference fields, only the reference is copied, not the actual object.
+
+2. **Deep Copy**:
+   - Copies primitive fields and creates new instances for reference fields, ensuring complete independence from the original object.
+
+---
+
+### **Example with Reference Field**
+
+```java
+class Address {
+    String city;
+
+    // Constructor
+    public Address(String city) {
+        this.city = city;
+    }
+
+    // Copy Constructor for Address
+    public Address(Address other) {
+        this.city = other.city;
+    }
+}
+
+class Person {
+    String name;
+    Address address;
+
+    // Constructor
+    public Person(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    // Copy Constructor for Person
+    public Person(Person other) {
+        this.name = other.name; // Copy primitive field
+        this.address = new Address(other.address); // Deep copy reference field
+    }
+
+    public static void main(String[] args) {
+        Address address1 = new Address("New York");
+        Person original = new Person("Alice", address1);
+
+        // Create a copy using the copy constructor
+        Person copy = new Person(original);
+
+        // Modify original reference object
+        address1.city = "San Francisco";
+
+        System.out.println("Original City: " + original.address.city); // San Francisco
+        System.out.println("Copy City: " + copy.address.city); // New York
+    }
+}
+```
+
+---
+
+### **Output**
+```
+Original City: San Francisco
+Copy City: New York
+```
+
+---
+
+### **Advantages of Copy Constructor**
+1. **Customization**: Allows control over how objects are copied.
+2. **Deep Copy**: Enables creating completely independent objects by duplicating referenced objects.
+
+---
+
+### **Usage Tips**
+- Use **shallow copy** if the referenced object doesn't require duplication.
+- Use **deep copy** if the referenced object should be independent of the original.
+
+[back to top](#index)
 
 ## **Atomic, Volatile, and Synchronized**
 
