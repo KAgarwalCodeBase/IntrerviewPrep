@@ -24,6 +24,9 @@
 - [Priority Queue Internals in JAVA](#priorityqueue-internals-in-java)
 - [OOPs Principle](#oops-principles)
 - [Difference Between Interface and Abstract Class in JAVA](#difference-between-interface-and-abstract-class-in-java)
+- [Garbage Collection Algorithms](#garbage-collection-algorithms)
+- [Design for Maintaining Transactional Consistency](#design-for-maintaining-the-transactional-consistency)
+- [Design for Maintaining Transactional Consistency in Spring Boot](#design-for-maintaining-the-transactional-consistency-in-spring-boot)
 
 ## Testing Tools
 Testing tools in java JUnit, Mockito, Spring test, JMeter, Selenium, SonarQube, Jenkins, Postman
@@ -1764,3 +1767,397 @@ interface Printable {
 
 [back to top](#index)  
 
+## Garbage Collection Algorithms
+In Java, the **Garbage Collector (GC)** is responsible for automatically managing memory by reclaiming memory that is no longer in use, i.e., objects that are no longer referenced or are unreachable. It helps prevent memory leaks and ensures efficient memory usage.
+
+Java's Garbage Collector uses various algorithms and strategies to reclaim memory. Below are the primary **Garbage Collection algorithms** used in Java:
+
+### 1. **Mark-and-Sweep Algorithm**
+   - **Overview**: The Mark-and-Sweep algorithm is one of the oldest and simplest garbage collection algorithms. It consists of two phases:
+     - **Mark Phase**: The garbage collector identifies all reachable objects (those that are still being referenced) by traversing the object graph starting from "root" references (such as local variables and active threads).
+     - **Sweep Phase**: Once all reachable objects are marked, the garbage collector sweeps through the heap, deleting the objects that were not marked (unreachable objects).
+   
+   - **Advantages**:
+     - Simple and easy to implement.
+     - Effective at cleaning up unused objects.
+   
+   - **Disadvantages**:
+     - Can cause pauses due to the marking and sweeping process.
+     - Fragmentation of memory (since objects are not compacted after sweeping).
+
+### 2. **Generational Garbage Collection**
+   - **Overview**: This is the most widely used garbage collection strategy in Java, especially in modern JVMs (e.g., HotSpot). It is based on the observation that most objects are short-lived, so objects are grouped by age.
+   
+   - **Phases**:
+     - **Young Generation**: New objects are created here. Most objects are expected to die young.
+     - **Old Generation**: Objects that survive multiple garbage collection cycles in the Young Generation are promoted to the Old Generation (Tenured Generation).
+     - **Permanent Generation**: (In older versions of Java, before Java 8) This area stores metadata like class definitions, method data, etc. In Java 8 and later, the Permanent Generation was replaced by **Metaspace**.
+
+   - **Collection Process**:
+     - **Minor GC (Young Generation Collection)**: Occurs frequently and involves collecting only the Young Generation, as most objects are short-lived.
+     - **Major GC (Full GC or Old Generation Collection)**: Occurs less frequently, and it collects both the Young and Old Generations. This is more expensive and takes longer than Minor GC.
+
+   - **Advantages**:
+     - Efficient for applications with many short-lived objects.
+     - Reduces the frequency of collecting Old Generation, which tends to have longer-lived objects.
+
+   - **Disadvantages**:
+     - Can cause pauses, especially during Full GCs, which may impact application performance.
+
+
+### 3. **Mark-Compact Algorithm**
+   - **Overview**: The Mark-Compact algorithm is similar to the Mark-and-Sweep algorithm but with an additional step after the sweeping phase.
+     - **Mark Phase**: Identifies all reachable objects.
+     - **Compact Phase**: After sweeping, the garbage collector moves all the live objects to one end of the heap and updates references to these objects to eliminate fragmentation.
+   
+   - **Advantages**:
+     - Reduces fragmentation, as objects are compacted in memory.
+   
+   - **Disadvantages**:
+     - More complex and resource-intensive than Mark-and-Sweep because it requires moving objects in memory.
+
+[back to top](#index)  
+
+## Design for maintaining the `Transactional Consistency`
+
+Maintaining transaction consistency is critical in distributed systems, databases, or any system involving multiple operations that must be treated as a single unit of work. Here’s a design approach to maintain transaction consistency:
+
+---
+
+### **1. Key Principles for Transaction Consistency**
+- **Atomicity**: Ensure all parts of the transaction succeed or none at all.
+- **Consistency**: The system transitions from one valid state to another, preserving all defined rules.
+- **Isolation**: Concurrent transactions don’t interfere with each other.
+- **Durability**: Once a transaction commits, its changes are permanent, even in case of a failure.
+
+---
+
+### **2. Design Techniques**
+#### **a. Using ACID-Compliant Databases**
+- Use a database management system (e.g., PostgreSQL, MySQL) that supports **ACID properties**.
+- **Implementation**:
+  - Begin a transaction using `BEGIN` or similar commands.
+  - Perform the required operations.
+  - Commit if all succeed; otherwise, rollback to ensure atomicity.
+
+**Example**:
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+COMMIT;
+-- If any update fails, use ROLLBACK to undo all changes.
+```
+
+#### **b. Two-Phase Commit (2PC)**
+- Used in distributed systems to ensure consistency across multiple nodes.
+- **Phases**:
+  1. **Prepare Phase**: Each participating system prepares the transaction and reports success/failure to a coordinator.
+  2. **Commit Phase**: If all participants prepare successfully, the coordinator sends a commit command; otherwise, it sends a rollback.
+  
+**Trade-offs**: 2PC can introduce latency and is vulnerable to coordinator failure.
+
+---
+
+#### **c. Eventual Consistency with Compensation (For Distributed Systems)**
+- When strict consistency isn’t feasible (e.g., microservices), use eventual consistency with compensating actions.
+- **Steps**:
+  1. Log the transaction's intent.
+  2. Perform the operation asynchronously across services.
+  3. Use compensating transactions to reverse changes in case of failure.
+
+**Example**:
+- A payment system may reserve funds in one service and finalize the transaction in another. If the finalization fails, it compensates by releasing the reserved funds.
+
+---
+
+#### **d. Saga Pattern**
+- Used in microservices to manage distributed transactions.
+- **Approaches**:
+  - **Choreography**: Each service performs its operation and triggers the next service via events.
+  - **Orchestration**: A central controller manages the transaction steps.
+  
+**Example**:
+- Flight booking involves reserving a seat, booking a hotel, and renting a car. Each step is a separate transaction, and failures roll back the previous steps.
+
+---
+
+#### **e. Idempotent Operations**
+- Design operations to be idempotent (safe to retry without unintended effects). This ensures consistency in case of retries due to failures.
+
+**Example**:
+- Deducting $100 from a balance multiple times during retries should only result in one deduction.
+
+---
+
+#### **f. Optimistic Locking**
+- Prevent conflicts by checking a version number or timestamp before applying changes. If the version has changed, abort the transaction and retry.
+  
+**Example**:
+```sql
+UPDATE accounts
+SET balance = balance - 100, version = version + 1
+WHERE account_id = 1 AND version = 5;
+-- If version is not 5, the update fails.
+```
+
+---
+
+#### **g. Write-Ahead Logging (WAL)**
+- Log every transaction before execution. If a failure occurs, replay the log to restore the consistent state.
+
+---
+
+### **3. Best Practices**
+- **Design for Failures**: Assume failures will happen and design mechanisms to detect and recover from them.
+- **Use Isolation Levels**: Choose appropriate database isolation levels (e.g., Serializable, Read Committed) to prevent conflicts.
+- **Monitor Transactions**: Use tools or logs to monitor transactions and detect inconsistencies early.
+- **Test for Edge Cases**: Simulate failures during transactions to validate rollback and recovery mechanisms.
+- **Partition and Shard Data**: Design the database to reduce contention on resources.
+
+---
+
+### **4. Example in Code**
+Using a **Spring Boot** application with database transactions:
+
+```java
+@Service
+@Transactional
+public class AccountService {
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public void transferFunds(Long fromAccountId, Long toAccountId, Double amount) {
+        Account fromAccount = accountRepository.findById(fromAccountId).orElseThrow();
+        Account toAccount = accountRepository.findById(toAccountId).orElseThrow();
+
+        if (fromAccount.getBalance() < amount) {
+            throw new InsufficientFundsException("Insufficient balance");
+        }
+
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+    }
+}
+```
+
+---
+
+### **Conclusion**
+Maintaining transaction consistency requires a combination of ACID properties, proper design patterns (e.g., Sagas), and fail-safe mechanisms. The right choice depends on the application’s requirements for consistency, availability, and scalability.
+
+[back to top](#index)  
+
+## Design for maintaining the `Transactional Consistency` in Spring boot
+
+To design a Spring Boot application that maintains **transaction consistency**, the following principles and strategies should be applied:
+
+---
+
+### **1. Leverage Spring Transaction Management**
+Spring provides robust transaction management with the `@Transactional` annotation. This annotation helps to ensure that:
+- A method executes as a single atomic transaction.
+- If an exception occurs, the transaction is rolled back.
+
+---
+
+#### **Key Features of Spring Transactions**
+1. **Declarative Transactions**: Managed using annotations or XML configuration.
+2. **Programmatic Transactions**: Managed explicitly in code using `TransactionTemplate` or `PlatformTransactionManager`.
+3. **Propagation**: Defines how nested transactions interact (e.g., `REQUIRED`, `REQUIRES_NEW`).
+4. **Isolation Levels**: Manages how transactions are isolated from each other (e.g., `READ_COMMITTED`, `SERIALIZABLE`).
+
+---
+
+### **2. Implementing Consistency in Spring Boot**
+
+#### **a. Using `@Transactional` for Atomicity**
+Ensure database operations within a method are atomic. If one operation fails, the entire transaction is rolled back.
+
+**Example**:
+```java
+@Service
+public class AccountService {
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Transactional
+    public void transferFunds(Long fromAccountId, Long toAccountId, Double amount) {
+        Account fromAccount = accountRepository.findById(fromAccountId).orElseThrow();
+        Account toAccount = accountRepository.findById(toAccountId).orElseThrow();
+
+        if (fromAccount.getBalance() < amount) {
+            throw new InsufficientFundsException("Insufficient balance");
+        }
+
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+    }
+}
+```
+- If an exception (e.g., `InsufficientFundsException`) is thrown, Spring automatically rolls back the transaction.
+
+---
+
+#### **b. Configuring Propagation**
+Control how nested methods handle transactions. For example, using `REQUIRES_NEW` ensures that the nested method starts a new transaction.
+
+**Example**:
+```java
+@Service
+public class NotificationService {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendNotification(String message) {
+        // Send notification logic
+    }
+}
+
+@Service
+public class AccountService {
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private NotificationService notificationService;
+
+    @Transactional
+    public void transferFunds(Long fromAccountId, Long toAccountId, Double amount) {
+        Account fromAccount = accountRepository.findById(fromAccountId).orElseThrow();
+        Account toAccount = accountRepository.findById(toAccountId).orElseThrow();
+
+        if (fromAccount.getBalance() < amount) {
+            throw new InsufficientFundsException("Insufficient balance");
+        }
+
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        // Even if notification fails, fund transfer remains consistent
+        notificationService.sendNotification("Funds transferred successfully!");
+    }
+}
+```
+
+---
+
+#### **c. Implementing Isolation Levels**
+Control how transaction operations handle data consistency when multiple transactions access the same data.
+
+**Example**:
+```java
+@Transactional(isolation = Isolation.READ_COMMITTED)
+public void processOrder(Long orderId) {
+    // Logic to process order
+}
+```
+
+**Common Isolation Levels**:
+1. `READ_UNCOMMITTED`: Dirty reads allowed.
+2. `READ_COMMITTED`: Only committed data can be read.
+3. `REPEATABLE_READ`: Prevents non-repeatable reads.
+4. `SERIALIZABLE`: Full isolation, prevents all anomalies.
+
+---
+
+#### **d. Optimistic Locking**
+Use versioning to avoid conflicts in concurrent updates. Spring Data JPA supports optimistic locking via `@Version`.
+
+**Entity Example**:
+```java
+@Entity
+public class Account {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Version
+    private Integer version;
+
+    private Double balance;
+
+    // Getters and setters
+}
+```
+
+---
+
+#### **e. Two-Phase Commit (2PC)**
+For distributed transactions involving multiple systems, Spring supports the **Java Transaction API (JTA)**.
+
+**Configuration**:
+- Use `Atomikos` or `Bitronix` for JTA transaction management.
+- Configure a JTA `DataSource` in Spring Boot.
+
+---
+
+#### **f. Retry Mechanism**
+In distributed systems, implement a retry mechanism for transient failures.
+
+**Example**:
+```java
+@Retryable(
+    value = { DataAccessException.class },
+    maxAttempts = 3,
+    backoff = @Backoff(delay = 1000)
+)
+public void performTransaction() {
+    // Transaction logic
+}
+```
+
+---
+
+#### **g. Saga Pattern for Microservices**
+For distributed systems, use the **Saga Pattern** to manage consistency.
+
+**Orchestrator Example**:
+```java
+@Service
+public class OrderService {
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private InventoryService inventoryService;
+
+    public void createOrder(Order order) {
+        try {
+            paymentService.processPayment(order);
+            inventoryService.reserveInventory(order);
+            // Complete order
+        } catch (Exception e) {
+            // Rollback or compensate
+        }
+    }
+}
+```
+
+---
+
+### **3. Best Practices**
+1. **Use Appropriate Isolation Levels**: Avoid overly strict isolation unless necessary (e.g., `SERIALIZABLE` can degrade performance).
+2. **Idempotency**: Design APIs and services to handle retries gracefully.
+3. **Error Handling**: Catch and handle expected exceptions to avoid partial commits.
+4. **Monitor Transactions**: Use tools like Spring Actuator, logs, and APM tools to monitor transaction performance.
+5. **Test for Edge Cases**: Validate rollback and recovery scenarios during failures.
+
+---
+
+### **4. Tools and Libraries**
+- **Spring Boot Starter Data JPA**: For database operations.
+- **Spring Retry**: For implementing retries.
+- **Atomikos**: For JTA-based distributed transactions.
+- **Kafka/ActiveMQ**: For eventual consistency and message-based systems.
+
+---
+
+This approach ensures robust transaction consistency while allowing scalability and fault tolerance in a Spring Boot application.
+
+[back to top](#index)  
