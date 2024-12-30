@@ -9,6 +9,7 @@
 - [Serialization/Deserialization in JAVA](#serializationdeserialization-in-java)
 - [Copy Constructor in JAVA](#copy-constructor-in-java)
 - [Atomic, Volatile & Synchronized](#atomic-volatile-and-synchronized)
+- [Synchronized Block in JAVA](#synchronized-block-in-java)
 - [Object Finalization in Java](#object-finalization-in-java)
 - [StringBuffer Vs StringBuilder](#stringbuffer-vs-stringbuilder)
 - [Comparison of some similar data structures in Java based on functionality, thread-safety, performance, and usage](#comparison-of-some-similar-data-structures-in-java-based-on-functionality-thread-safety-performance-and-usage)
@@ -617,6 +618,35 @@ Copy City: New York
 - **Examples**:
   - `AtomicInteger`, `AtomicLong`, `AtomicReference`.
   
+Example of AtomicInteger:  
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicExample {
+    public static void main(String[] args) {
+        // Create an AtomicInteger with an initial value of 0
+        AtomicInteger atomicCounter = new AtomicInteger(0);
+
+        // Atomically increment the value and print it
+        System.out.println("Initial Value: " + atomicCounter.get());
+        atomicCounter.incrementAndGet(); // Increment and get the new value
+        System.out.println("After Increment: " + atomicCounter.get());
+
+        // Atomically set a new value
+        atomicCounter.set(100);
+        System.out.println("After Set: " + atomicCounter.get());
+
+        // Atomically update value if it matches the expected value
+        boolean success = atomicCounter.compareAndSet(100, 200);
+        System.out.println("Compare and Set Success: " + success);
+        System.out.println("After Compare and Set: " + atomicCounter.get());
+
+        // Atomically add a value and return the result
+        int updatedValue = atomicCounter.addAndGet(50);
+        System.out.println("After Add and Get: " + updatedValue);
+    }
+}
+```
 ---
 
 #### **2. `Volatile`**
@@ -630,7 +660,41 @@ Copy City: New York
   - Simple flags, status variables, or single-read/write scenarios.
 - **Example**:
   - A volatile `boolean` flag to stop a thread.
+```java
+class VolatileExample {
+    // Declaring the variable as volatile ensures visibility across threads
+    private static volatile boolean flag = false;
 
+    public static void main(String[] args) throws InterruptedException {
+        // Thread 1: Sets the flag to true after 2 seconds
+        Thread writerThread = new Thread(() -> {
+            try {
+                Thread.sleep(2000); // Simulating some work
+                flag = true;
+                System.out.println("Flag is set to true");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+        // Thread 2: Keeps checking the flag value and prints a message when it's true
+        Thread readerThread = new Thread(() -> {
+            while (!flag) {
+                // Busy-waiting until flag becomes true
+            }
+            System.out.println("Flag is true, Reader Thread Exiting.");
+        });
+
+        // Start both threads
+        writerThread.start();
+        readerThread.start();
+
+        // Wait for threads to finish
+        writerThread.join();
+        readerThread.join();
+    }
+}
+```
 ---
 
 #### **3. `Synchronized`**
@@ -645,7 +709,20 @@ Copy City: New York
   - Protecting critical sections or shared resources in multi-step operations.
 - **Example**:
   - A synchronized method to increment a shared counter.
+```java
+class Counter {
+    private int count = 0;
 
+    // Synchronized method
+    public synchronized void increment() {
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
+}
+```
 ---
 
 ### **Comparison**
@@ -665,6 +742,43 @@ Copy City: New York
 3. **Synchronized**: When you need both atomicity and visibility for complex, multi-step operations.
 
 [back to top](#index)
+
+## **Synchronized Block in Java**
+
+A **synchronized block** is used to limit the scope of synchronization to specific parts of a method, ensuring that only one thread can execute a critical section of code at a time. It is more efficient than synchronizing the entire method because it only locks the necessary code, reducing unnecessary blocking.
+
+#### **Syntax**:
+```java
+synchronized (object) {
+    // Critical section
+}
+```
+- **object**: The object being locked (e.g., `this` or any other object reference).
+
+#### **Use Case**:
+Used when multiple threads access shared resources (like variables) and you want to ensure thread safety by locking only the critical section (e.g., data modification) without blocking other code in the method.
+
+#### **Example**:
+```java
+class BankAccount {
+    private double balance;
+
+    public void deposit(double amount) {
+        synchronized (this) {
+            balance += amount;
+        }
+    }
+}
+```
+
+#### **Advantages**:
+- **Performance**: Locks only the critical section, improving efficiency.
+- **Granularity**: Provides more fine-grained control compared to synchronizing an entire method.
+
+### **Conclusion**:
+A synchronized block in Java ensures thread safety for critical code sections, minimizing blocking and improving performance.
+
+[back to top](#index)  
 
 ## **Object Finalization in Java**
 
