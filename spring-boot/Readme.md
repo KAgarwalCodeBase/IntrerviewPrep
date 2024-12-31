@@ -15,7 +15,8 @@
 - [How to Secure Spring Application?](#how-to-secure-spring-application)
 - [How Spring Boot works internally](#how-spring-boot-works-internally)
 - [Spring Boot Core Module](#spring-boot-core-module)
-- [How Does the Dispatcher Servlet work in Spring boot](#how-does-the-dispatcherservlet-work-in-spring-boot)
+- [How Does the Dispatcher Servlet work in Spring boot](#how-does-the-dispatcherservlet-work-in-spring-boot)  
+
 @EnableScheduling, @Scheduled(cron)
 ### What is Spring boot?
 - auto-configurationa and set-up process.

@@ -1,13 +1,12 @@
 ## Table of Contents
 
--   [FeignClient: For Make HTTP calss to extral API's.](#feignclient-for-make-http-calss-to-extral-apis)
+-   [FeignClient: For Making HTTP calls to external API's.](#feignclient-for-making-http-calls-to-external-apis)
 -   [Service Registry](#what-is-a-service-registry)
-- [API Gateway](#api-gateway)
-For API Gateway 
-spring-cloud-starter-gateway
+- [API Gateway](#api-gateway)  
 
 
-### FeignClient: For Make HTTP calss to extral API's.
+
+### FeignClient: For Making HTTP calls to external API's
 
 `FeignClient` is a declarative REST client in Spring Boot, used for making HTTP calls to external APIs in a more concise and readable way. It eliminates boilerplate code for creating REST clients by using annotations.
 
