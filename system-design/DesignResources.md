@@ -14,3 +14,5 @@
 
 - [Payment Gateway](https://www.youtube.com/watch?v=NxjGFIgFCbg)
 - [Amazon Payment System](https://www.youtube.com/watch?v=rT4sS4l51PY)
+
+- [Publisher/Subscriber Model](https://www.youtube.com/watch?v=FMhbR_kQeHw)

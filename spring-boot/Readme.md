@@ -16,6 +16,11 @@
 - [How Spring Boot works internally](#how-spring-boot-works-internally)
 - [Spring Boot Core Module](#spring-boot-core-module)
 - [How Does the Dispatcher Servlet work in Spring boot](#how-does-the-dispatcherservlet-work-in-spring-boot)  
+- [What is spring boot actuator?](#what-is-spring-boot-actuator)
+- [What are some commonly used endpoints in spring boot](#what-are-some-commonly-used-endpoints-in-spring-boot-actuator)
+- [Changing Property at runtime](#changing-property-at-runtime)
+- [Aspect Oriented Programming (AOP)](#aspect-oriented-programming-aop)
+- [@ControllerAdvice](#controlleradvice)
 
 @EnableScheduling, @Scheduled(cron)
 ### What is Spring boot?
@@ -642,3 +647,81 @@ The core modules of Spring provide the essential infrastructure for building rob
 In summary, **DispatcherServlet** acts as the central controller in Spring Boot, routing requests to the correct controllers and rendering views based on the return values from the controller methods.
 
 <sub>[back to top](#table-of-contents)</sub>
+
+
+## What is Spring Boot Actuator?
+Spring Boot Actuator is a set of tools to help monitor and manage Spring Boot applications in production. It provides various endpoints for health checks, metrics, and environment details.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## What are some commonly used endpoints in Spring Boot Actuator?
+Some common endpoints include:
+/actuator/health: Displays health status of the application.
+/actuator/metrics: Exposes application performance metrics.
+/actuator/env: Shows environment properties.
+/actuator/info: Provides application metadata like version and build information.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## Changing Property at Runtime
+In Spring, to change properties at runtime, you can use:
+
+1. **Environment Interface**: Access properties at runtime using `Environment`, but it doesn't support direct updates.
+2. **`@ConfigurationProperties`**: Bind properties to beans and reload them from external sources like a database.
+3. **Spring Cloud Config**: Use for centralized configuration management with dynamic updates via `/actuator/refresh`.
+4. **`@RefreshScope`**: Automatically refresh beans with new properties when the configuration is updated (works with Spring Cloud).
+
+For dynamic changes, **Spring Cloud Config** is the most common solution.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## Aspect Oriented Programming (AOP)
+**Aspect-Oriented Programming (AOP)** in Spring is a programming paradigm that allows separating cross-cutting concerns (e.g., logging, security, transactions) from the core business logic. AOP helps in modularizing the code by applying behaviors like logging, transaction management, and security across multiple methods without modifying the actual code of those methods.
+
+### Key Concepts:
+1. **Aspect**: A module that contains cross-cutting concerns (e.g., logging, caching).
+2. **Join Point**: A point in the program execution where an aspect can be applied (e.g., method execution).
+3. **Advice**: The code that is executed at a join point. Types of advice:
+   - **Before**: Runs before a method execution.
+   - **After**: Runs after a method execution (regardless of success/failure).
+   - **After Returning**: Runs after a successful method execution.
+   - **After Throwing**: Runs if the method throws an exception.
+   - **Around**: Wraps method execution, allowing you to modify input/output or control the flow.
+
+4. **Pointcut**: A predicate that matches join points, helping to define where advice should be applied.
+5. **Weaving**: The process of applying aspects to target objects. This happens at runtime, compile-time, or load-time.
+
+### Example of AOP in Spring:
+
+1. **Define an Aspect:**
+   ```java
+   @Aspect
+   @Component
+   public class LoggingAspect {
+       @Before("execution(* com.example.service.*.*(..))")
+       public void logBefore(JoinPoint joinPoint) {
+           System.out.println("Before method: " + joinPoint.getSignature().getName());
+       }
+   }
+   ```
+
+2. **Enable AOP in Spring Configuration:**
+   ```java
+   @Configuration
+   @EnableAspectJAutoProxy
+   public class AppConfig {
+   }
+   ```
+
+### Use Cases:
+- **Logging**: Automatically log method entry and exit.
+- **Security**: Implement authentication and authorization across various methods.
+- **Transactions**: Manage transactions declaratively across methods.
+  
+AOP in Spring improves modularity, promotes cleaner code, and enhances maintainability by separating concerns that are not part of the business logic.
+
+## @ControllerAdvice
+The @ControllerAdvice annotation in Spring is used to define a global exception handler for all controllers in a Spring application.
+
+<sub>[back to top](#table-of-contents)</sub>
+
