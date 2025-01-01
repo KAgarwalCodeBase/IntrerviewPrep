@@ -21,6 +21,7 @@
 - [Changing Property at runtime](#changing-property-at-runtime)
 - [Aspect Oriented Programming (AOP)](#aspect-oriented-programming-aop)
 - [@ControllerAdvice](#controlleradvice)
+- [Stream Vs for loop](#stream-vs-for-loop)
 
 @EnableScheduling, @Scheduled(cron)
 ### What is Spring boot?
@@ -725,3 +726,21 @@ The @ControllerAdvice annotation in Spring is used to define a global exception 
 
 <sub>[back to top](#table-of-contents)</sub>
 
+## Stream Vs for Loop
+
+| **Feature**              | **Stream**                                      | **for loop**                                 |
+|--------------------------|-------------------------------------------------|---------------------------------------------|
+| **Programming Style**     | Declarative (focuses on what to do)             | Imperative (focuses on how to do it)        |
+| **Parallelism**           | Can be easily parallelized (`parallelStream()`) | Manual handling of parallelism required     |
+| **Iteration**             | Internal iteration (handled by Stream API)      | External iteration (explicit loop control)  |
+| **Evaluation**            | Lazy evaluation (operations executed when terminal operation is invoked) | Immediate execution of loop logic          |
+| **Readability**           | More concise, especially for complex transformations | More verbose, especially for complex logic |
+| **Side Effects**          | Should avoid side effects (pure functional style) | Can have side effects (modifying external states) |
+| **Performance**           | May be optimized (parallelism and optimizations by Stream API) | Typically faster for simple tasks         |
+| **Example**               | `numbers.stream().filter(x -> x % 2 == 0).forEach(System.out::println)` | `for (int num : numbers) { if (num % 2 == 0) { System.out.println(num); } }` |
+
+### Conclusion:
+- **Streams** are ideal for functional-style, concise, and chainable operations with the advantage of parallelism and lazy evaluation.
+- **for loops** are more straightforward and offer fine control over iteration, especially for simpler tasks.
+
+<sub>[back to top](#table-of-contents)</sub>
