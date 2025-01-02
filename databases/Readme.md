@@ -2,6 +2,7 @@
 - [OLAP Vs OLTP Databases](#olap-vs-oltp-databses)
 - [Normal Forms in Databases](#normal-forms-in-database)
 - [Joins in Database](#joins-in-database)
+- [Difference Between SQL and No-SQL](#differences-between-sql-and-nosql)
 
 ## OLAP VS OLTP Database
 | **Aspect**      | **OLAP (Online Analytical Processing)**                                                                 | **OLTP (Online Transaction Processing)**                                                    |
@@ -33,5 +34,21 @@
 | **FULL JOIN (FULL OUTER JOIN)** | Returns rows when there is a match in one of the tables. Returns NULL for non-matching rows from both tables. | Returns all customers and all orders, with NULL where there’s no match.   |
 | **CROSS JOIN**     | Returns the Cartesian product of both tables (each row of the first table combined with each row of the second table). | Returns all combinations of customers and products.                        |
 | **SELF JOIN**      | Joins a table with itself to combine rows based on a related column.                                          | Returns employees and their managers from the same "employees" table.      |
+
+<sub>[back to top](#table-of-contents)</sub>
+
+
+## Differences between SQL and NoSQL
+
+| Feature               | SQL (Relational)                           | NoSQL (Non-relational)                     |
+|-----------------------|--------------------------------------------|--------------------------------------------|
+| **Data Model**         | Structured (tables, rows, columns)         | Flexible (key-value, document, graph)      |
+| **Schema**             | Fixed schema                               | Schema-less or flexible                    |
+| **Scalability**        | Vertical (scaling up)                      | Horizontal (scaling out)                   |
+| **Consistency**        | ACID (strong consistency)                  | BASE (eventual consistency)                |
+| **Query Language**     | SQL (Structured queries)                   | No standard query language (varies by type)|
+| **Transactions**       | Supports transactions with ACID properties | Limited transactional support              |
+| **Best For**           | Structured data, complex relationships     | Large-scale, unstructured data, real-time  |
+
 
 <sub>[back to top](#table-of-contents)</sub>
