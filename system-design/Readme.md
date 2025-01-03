@@ -30,6 +30,27 @@
 Flink/Aws firehouse / Spark streams: Aggregator services 
 count min sketch / map reduce 
 
+Spark:
+- Aggregation Queries
+- Batch Jobs
+- Data Streams
+- Graph Queries
+
+Internally it lets us use:
+- Graph Algorithm using GraphX
+- Machine Learning algorithm using MLLib
+- Aggregate queries using SQL Library 
+- Map Reduce 
+
+Advantage:
+- General Purpose [Data Analysis]
+- Scalable and Performant (some cases 1000x, avg case 40x than map reduce)
+- Plugable with various technology
+  - Flexible ingestion source
+  - Flexible cluster management
+   
+
+
 ## Important Topics:
 
 ## Memory Unit Chart:

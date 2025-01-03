@@ -29,7 +29,18 @@
 - [Design for Maintaining Transactional Consistency in Spring Boot](#design-for-maintaining-the-transactional-consistency-in-spring-boot)
 
 ## Testing Tools
-Testing tools in java JUnit, Mockito, Spring test, JMeter, Selenium, SonarQube, Jenkins, Postman
+Testing tools in java JUnit, Mockito, Spring test, JMeter, Selenium, SonarQube, Jenkins, Postman.
+
+| **Tool**       | **Purpose**                                                                                  |
+|-----------------|----------------------------------------------------------------------------------------------|
+| **JUnit**       | For unit testing Java code to ensure individual components work as expected.                |
+| **Mockito**     | For mocking dependencies in tests to isolate and test specific units of code.               |
+| **Spring Test** | For testing Spring applications, including context loading and integration tests.           |
+| **JMeter**      | For performance and load testing to measure application behavior under various loads.       |
+| **Selenium**    | For automated testing of web applications across different browsers and environments.       |
+| **SonarQube**   | For code quality analysis and identifying bugs, vulnerabilities, and code smells.           |
+| **Jenkins**     | For continuous integration and delivery (CI/CD) to automate the build and deployment process.|
+| **Postman**     | For testing and debugging APIs by sending requests and validating responses.                |
 
 Unit Testing  
 Mocking:   
