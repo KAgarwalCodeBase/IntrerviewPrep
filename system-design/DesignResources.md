@@ -31,4 +31,4 @@
 - [Amazon Payment System](https://www.youtube.com/watch?v=rT4sS4l51PY)
 - [Leaderboard](https://systemdesign.one/leaderboard-system-design/)
 - [System Design in an Hour](https://www.youtube.com/watch?v=iYIjJ7utdDI)
-
+- [Turkey Delivery System](https://www.youtube.com/live/DzWS2O_6-fI)
