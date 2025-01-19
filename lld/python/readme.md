@@ -62,3 +62,17 @@ Components of Strategy Pattern:
 - ConcreteStrategy: A class that implements the Strategy interface and provides a specific implementation of an algorithm.
 
 Example: Sorting Strategy
+
+## [Observer Pattern](https://chatgpt.com/share/678d54fa-7a50-8001-8c7a-ae06d9a10a1b)
+Components of the Observer Pattern:
+- Subject: The object whose state is being observed. It maintains a list of observers and notifies them of any changes.
+- Observer: An object that wants to be notified of changes in the subject's state.
+- ConcreteSubject: A subclass of the Subject, which holds the state and triggers notifications.
+- ConcreteObserver: A subclass of the Observer, which reacts to state changes in the Subject.
+
+# [Builder Pattern](https://chatgpt.com/share/678d5ba1-bab8-8001-a5d3-ff22fad98b46)
+Key Components
+- Builder: An abstract interface defining the building steps.
+- ConcreteBuilder: Implements the Builder interface and provides specific implementations for the construction process.
+- Director: Manages the construction process using a Builder object.
+- Product: The final object being constructed.
