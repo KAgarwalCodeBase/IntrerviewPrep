@@ -82,3 +82,9 @@ Key Concepts of Decorator Pattern
 - ConcreteComponent: A class that implements the Component interface and represents the core object.
 - Decorator: An abstract class implementing the Component interface, containing a reference to a Component object. This class provides the base for adding additional functionalities.
 - ConcreteDecorator: A subclass of Decorator that extends the functionality of the Component.
+
+## [State Pattern](https://chatgpt.com/share/678d7f60-1838-8001-bfe5-ca98193c1c9e)
+Key Concepts
+- Context: The object that has an internal state and delegates behavior to the current state object.
+- State Interface/Abstract Class: Defines the common interface for all concrete state classes.
+- Concrete States: Implement different behaviors associated with a particular state of the context.
