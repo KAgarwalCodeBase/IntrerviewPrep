@@ -9,7 +9,7 @@ Table of Contents
 - [Prototype Pattern](#prototype-pattern)
 - [Decorator Pattern](#decorator-pattern)
 - [State Pattern](#state-pattern)
-
+- [Factory Pattern](https://chatgpt.com/share/678d6247-e9c8-8001-a4f0-385995085a1d)
 
 ## Metaclass in Python
 
