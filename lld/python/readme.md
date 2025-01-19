@@ -3,7 +3,6 @@ Table of Contents
 - [Singleton Pattern](#singleton-pattern)
 - [Strategy Pattern](#strategy-pattern-in-python)
 - [Observer Pattern](#observer-pattern)
-
 - [Abstract Factory Pattern](#abstract-factory-design-pattern)
 - [Builder Pattern](#builder-pattern)
 - [Prototype Pattern](#prototype-pattern)
@@ -76,3 +75,10 @@ Key Components
 - ConcreteBuilder: Implements the Builder interface and provides specific implementations for the construction process.
 - Director: Manages the construction process using a Builder object.
 - Product: The final object being constructed.
+
+# [Decorator Pattern](https://chatgpt.com/share/678d7207-95b0-8001-b897-539fdddc5cfc)
+Key Concepts of Decorator Pattern
+- Component: Defines the interface for objects that can have responsibilities added to them dynamically.
+- ConcreteComponent: A class that implements the Component interface and represents the core object.
+- Decorator: An abstract class implementing the Component interface, containing a reference to a Component object. This class provides the base for adding additional functionalities.
+- ConcreteDecorator: A subclass of Decorator that extends the functionality of the Component.
