@@ -4,7 +4,8 @@
 - [Publisher/Subscriber Model](https://www.youtube.com/watch?v=FMhbR_kQeHw)
 - [ServerLess](https://martinfowler.com/articles/serverless.html)
 - [Heartbeat](https://martinfowler.com/articles/patterns-of-distributed-systems/heartbeat.html)
-
+- [Database Sharding and Partitioning](https://youtu.be/wXvljefXyEo?si=TcWQW5K6TJUb0yu_)
+- [DynamoDB Deep Dive](https://youtu.be/2X2SO3Y-af8?si=FL-OPnqVoazL9u1v)
 
 ### Case Studies
 ---

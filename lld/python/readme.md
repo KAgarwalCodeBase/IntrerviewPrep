@@ -9,6 +9,7 @@ Table of Contents
 - [Decorator Pattern](#decorator-pattern)
 - [State Pattern](#state-pattern)
 - [Factory Pattern](https://chatgpt.com/share/678d6247-e9c8-8001-a4f0-385995085a1d)
+- [Command Pattern](#command-pattern)
 
 ## Metaclass in Python
 
@@ -88,3 +89,11 @@ Key Concepts
 - Context: The object that has an internal state and delegates behavior to the current state object.
 - State Interface/Abstract Class: Defines the common interface for all concrete state classes.
 - Concrete States: Implement different behaviors associated with a particular state of the context.
+
+## [Command Pattern](https://chatgpt.com/share/678d94d3-a3ac-8001-a4e2-400e3a97aafc)
+Key Components
+- Command: Declares an interface for executing an operation.
+- ConcreteCommand: Implements the Command interface by linking a Receiver and executing a method on it.
+- Receiver: Knows how to perform the operations associated with carrying out a request.
+- Invoker: Stores the command object and triggers the command's execution.
+- Client: Creates specific command objects and assigns them to an invoker.
