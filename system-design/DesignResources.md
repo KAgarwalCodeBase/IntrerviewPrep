@@ -33,3 +33,4 @@
 - [Leaderboard](https://systemdesign.one/leaderboard-system-design/)
 - [System Design in an Hour](https://www.youtube.com/watch?v=iYIjJ7utdDI)
 - [Turkey Delivery System](https://www.youtube.com/live/DzWS2O_6-fI)
+- [FB Live Comments](https://youtu.be/LjLx0fCd1k8?si=BYJj5MUTNSCgPF19)

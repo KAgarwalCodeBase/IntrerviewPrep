@@ -5,6 +5,7 @@
     - [Memory Unit Chart](#memory-unit-chart)
     - [CAP Theorem](#cap-theorem)
     - [Consistent Hashing](#consistent-hashing)
+    - [Database Sharding and Partitioning](#database-sharding-and-partitioning)
     - [Bloom Filter](#bloom-filter)
     - [AWS Opensearch](#aws-opensearch)
     - [Redis](#redis)
@@ -101,6 +102,13 @@ Advantage:
 
 ## [Consistent Hashing](https://www.youtube.com/watch?v=zaRkONvyGr8)
 Consistent hashing is a fundamental technique used in distributed systems to partition data / load across machines in a way that prioritizes evenness of distribution while minimizing re-mapping of data if a node enters or leaves the system.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## [Database Sharding and Partitioning](https://youtu.be/wXvljefXyEo?si=ILo5L1DRpO56Oo9c)
+- Database is nothing but running database server on EC2 which uses EC2 CPU and memory.
+- Sharding is used for database. i.e when using more then one database.
+- Partitioning is used for data spliting. It might be horizontal (spliting the rows) or vertical (spliting by column).
 
 <sub>[back to top](#table-of-contents)</sub>
 
