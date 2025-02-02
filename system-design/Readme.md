@@ -21,6 +21,7 @@
     - [Elastic Search](#elastic-search)
     - [Choke Point](#stratigies-for-handling-choke-point)
     - [Secondary Indexes in Dynamo DB](#secondary-indexes-in-dynamo-db)
+    - [Recommendation System infra basics](#recommendation-system-infra-basics)
 -   [Future Reads](#future-reads)
 -   [Delivery Framework](#delivery-framework)
 -   [Core Concepts](#core-concepts)
@@ -607,6 +608,58 @@ Notes:
 
 ## [Secondary Indexes in Dynamo DB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html)
 A secondary index is a data structure that contains a subset of attributes from a table, along with an alternate key to support Query operations. You can retrieve data from the index using a Query, in much the same way as you use Query with a table. A table can have multiple secondary indexes, which give your applications access to many different query patterns.
+
+<sub>[back to top](#table-of-contents)</sub>
+
+## [Recommendation System Infra Basics](https://youtu.be/GncgOIiMII8?si=EhC0AcQSQil5cJ_s)
+**Understanding Recommendation Systems: A Layered Approach**  
+
+Hey! Let me walk you through how recommendation systems work, like the ones YouTube or TikTok might use. The big idea is to *quickly* find stuff you’ll love from *billions* of options. Here’s how they do it without melting down servers:  
+
+---
+
+### **The Problem**  
+Imagine trying to pick *the best video* for someone when there are **billions** to choose from. If you scored every single video for every user (using fancy AI models), it’d take weeks and cost a fortune. That’s obviously not practical.  
+
+---
+
+### **The Solution: A 3-Step Process**  
+1. **Candidate Generation** (Narrowing the Choices)  
+   - Think of this as a *rough filter*. Instead of scoring every video, the system uses smart shortcuts:  
+     - **Simple Rules**: Like “Show trending videos” or “Show new uploads from channels you follow.” (Ever notice how MrBeast videos pop up if you’re subscribed?)  
+     - **Smart Similarity Searches**:  
+       - Turn videos (or users) into *math fingerprints* called **embeddings** (e.g., a cat video becomes [0.2, 0.7, -1.3…]).  
+       - Use a **vector database** (like Pinecone or Faiss) to find “nearby” fingerprints. For example:  
+         - *“You liked this cat video? Here are 100 others with similar fingerprints.”*  
+       - These databases use tricks like **ANN** (Approximate Nearest Neighbor) to search *fast*, even with trillions of items.  
+
+   → This step cuts billions down to ~1,000 candidates.  
+
+2. **Ranking** (Sorting the Best)  
+   - Now, the system uses an AI model to *score and sort* those ~1,000 candidates.  
+   - Example: “You’ll probably watch this dog video (score: 95%) more than this chess tutorial (score: 20%).”  
+
+3. **Re-Ranking** (Final Tweaks)  
+   - Adjust the top picks to match real-world needs:  
+     - **Boost new videos** so they get a chance (*exploration* vs. *exploitation*).  
+     - **Remove stuff you’ve blocked** or mark as sensitive.  
+     - **Mix up categories** to avoid showing 10 cat videos in a row.  
+   - Example: The ranker picks 25 videos, but the re-ranker swaps in 2 new ones and removes 3 you’ve already seen.  
+
+---
+
+### **Why This Works**  
+- **Speed**: Candidate generation avoids brute-forcing billions of items.  
+- **Flexibility**: Re-ranking lets engineers tweak results *without rebuilding the whole system*.  
+- **Scalability**: Vector databases and heuristics handle massive data.  
+
+---
+
+### **Key Takeaways**  
+- **No perfect answers**: It’s about balancing speed, cost, and accuracy.  
+- **Layers matter**: Each stage (candidate → rank → re-rank) solves a piece of the puzzle.  
+- **Tools you’ll see**: Vector databases (Pinecone, Faiss) and ANN algorithms (like HNSW) are industry staples.  
+
 
 <sub>[back to top](#table-of-contents)</sub>
 
