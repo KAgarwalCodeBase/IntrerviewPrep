@@ -109,7 +109,9 @@ Consistent hashing is a fundamental technique used in distributed systems to par
 ## [Database Sharding and Partitioning](https://youtu.be/wXvljefXyEo?si=ILo5L1DRpO56Oo9c)
 - Database is nothing but running database server on EC2 which uses EC2 CPU and memory.
 - Sharding is used for database. i.e when using more then one database.
+  - If there is multiple database having same data (i.e database is sharded but not partitioned) is mainly used to support high read load (i.e read replica)
 - Partitioning is used for data spliting. It might be horizontal (spliting the rows) or vertical (spliting by column).
+  - If database is sharded and data is partitioned then it will support higher read and write load.
 
 <sub>[back to top](#table-of-contents)</sub>
 
