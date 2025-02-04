@@ -118,6 +118,11 @@ Consistent hashing is a fundamental technique used in distributed systems to par
 ## [Bloom filter](https://www.youtube.com/watch?v=gBygn3cVP80)
 A Bloom filter is a space-efficient probabilistic data structure used to test whether an element is a member of a set. It is designed for scenarios where fast lookups and memory efficiency are crucial, but it allows for a small probability of false positives.
 
+Characteristics
+- firm no, maybe yes  
+- drawbacks: does not support deletion operation.
+- uses: email address is already used, url is already crawled etc.
+
 <sub>[back to top](#table-of-contents)</sub>
 
 

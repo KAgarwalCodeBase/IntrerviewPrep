@@ -1,3 +1,6 @@
+### Important Youtube channels and links
+- [Exponent System Design Playlist](https://www.youtube.com/playlist?list=PLrtCHHeadkHp92TyPt1Fj452_VGLipJnL)
+
 ### Tool / Technologies
 ---
 - [Spark](https://medium.com/@amitjoshi7/an-introduction-to-apache-spark-big-data-processing-made-easy-d1288153607d)
